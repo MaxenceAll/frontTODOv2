@@ -73,55 +73,55 @@ function Themes() {
         Choisissez votre thème, theme en cours : {theme}
         <STYLEDThemeOptions>
           <STYLEDThemeOptionsButtons
-            className={theme === "vert" ? "active" : ""}
+            isActiveTheme={theme === "vert" ? "active" : ""}
             onClick={() => handleClick("vert")}
           >
             Vert
           </STYLEDThemeOptionsButtons>
           <STYLEDThemeOptionsButtons
-            className={theme === "rouge" ? "active" : ""}
+            isActiveTheme={theme === "rouge" ? "active" : ""}
             onClick={() => handleClick("rouge")}
           >
             Rouge
           </STYLEDThemeOptionsButtons>
           <STYLEDThemeOptionsButtons
-            className={theme === "bleu" ? "active" : ""}
+            isActiveTheme={theme === "bleu" ? "active" : ""}
             onClick={() => handleClick("bleu")}
           >
             Blue
           </STYLEDThemeOptionsButtons>
           <STYLEDThemeOptionsButtons
-            className={theme === "violet" ? "active" : ""}
+            isActiveTheme={theme === "violet" ? "active" : ""}
             onClick={() => handleClick("violet")}
           >
             Violet
           </STYLEDThemeOptionsButtons>
           <STYLEDThemeOptionsButtons
-            className={theme === "jaune" ? "active" : ""}
+            isActiveTheme={theme === "jaune" ? "active" : ""}
             onClick={() => handleClick("jaune")}
           >
             Jaune
           </STYLEDThemeOptionsButtons>
           <STYLEDThemeOptionsButtons
-            className={theme === "cyan" ? "active" : ""}
+            isActiveTheme={theme === "cyan" ? "active" : ""}
             onClick={() => handleClick("cyan")}
           >
             Cyan
           </STYLEDThemeOptionsButtons>
           <STYLEDThemeOptionsButtons
-            className={theme === "rose" ? "active" : ""}
+            isActiveTheme={theme === "rose" ? "active" : ""}
             onClick={() => handleClick("rose")}
           >
             Rose
           </STYLEDThemeOptionsButtons>
           <STYLEDThemeOptionsButtons
-            className={theme === "bronze" ? "active" : ""}
+            isActiveTheme={theme === "bronze" ? "active" : ""}
             onClick={() => handleClick("bronze")}
           >
             Bronze
           </STYLEDThemeOptionsButtons>
           <STYLEDThemeOptionsButtons
-            className={theme === "blé" ? "active" : ""}
+            isActiveTheme={theme === "blé" ? "active" : ""}
             onClick={() => handleClick("blé")}
           >
             Blé
@@ -168,4 +168,6 @@ const STYLEDThemeOptionsButtons = styled.button`
     background-color: var(--main-color);
     color: var(--background-color);
   }
+  background-color: ${props => props.isActiveTheme ? 'var(--main-color)' : 'var(--secondary-color)'};
+  color: ${props => props.isActiveTheme ? 'var(--secondary-color)' : 'var(--main-color)'}
 `;
