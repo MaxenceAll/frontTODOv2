@@ -27,19 +27,10 @@ GENERAL
 .active-link {
   text-decoration: underline;
   background-color: var(--background-color);
-}
-
-/* 
-APP CONTAINER CSS
-*/
-
-
-
-
-/* 
-THEME PAGE CSS
-*/
-.theme-options button.active {
-  background-color:var(--main-color);
-  color: var(--background-color);
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  padding-left: 2%;
+  padding-right: 2%;
+  text-transform: uppercase;
 }

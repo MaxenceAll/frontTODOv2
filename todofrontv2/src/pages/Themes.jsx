@@ -5,6 +5,9 @@ import { useCookies } from "react-cookie";
 
 import styled from "styled-components";
 
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 function Themes() {
   const { theme, setTheme } = useContext(ThemeContext);
   const [cookies, setCookie] = useCookies(["theme"]);
@@ -65,10 +68,27 @@ function Themes() {
   function handleClick(color) {
     setTheme(color);
     setCookie("theme", color);
+    toast.success(`Changement de theme pour ${color}`);
   }
+
 
   return (
     <STYLEDThemeContainer>
+
+      <ToastContainer
+        position="bottom-center"
+        autoClose={1000}
+        hideProgressBar={false}
+        newestOnTop={true}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+        toastStyle={{ backgroundColor: "var(--secondary-color)" , color: "var(--main-color)"}}
+      />
+
       <STYLEDThemeContainerBox>
         Choisissez votre thème, theme en cours : {theme}
         <STYLEDThemeOptions>
@@ -168,6 +188,8 @@ const STYLEDThemeOptionsButtons = styled.button`
     background-color: var(--main-color);
     color: var(--background-color);
   }
-  background-color: ${props => props.isActiveTheme ? 'var(--main-color)' : 'var(--secondary-color)'};
-  color: ${props => props.isActiveTheme ? 'var(--secondary-color)' : 'var(--main-color)'}
+  background-color: ${(props) =>
+    props.isActiveTheme ? "var(--main-color)" : "var(--secondary-color)"};
+  color: ${(props) =>
+    props.isActiveTheme ? "var(--secondary-color)" : "var(--main-color)"};
 `;

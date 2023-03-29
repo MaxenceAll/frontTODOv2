@@ -79,6 +79,9 @@ const STYLEDHeaderBtnContainer = styled.div`
   align-items: center;
   flex-direction: row;
   gap: 5%;
+  padding-left: 2%;
+  padding-right: 2%;
+
   @media only screen and (max-width: 650px) {
     font-size: 2rem;
   }

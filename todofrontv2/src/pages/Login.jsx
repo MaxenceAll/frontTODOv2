@@ -1,14 +1,20 @@
 import { useState } from "react";
+
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 import styled from "styled-components";
 
+import ForgottenPasswordModal from "../components/Modals/ForgottenPasswordModal";
+
 function Login() {
-  const [isLoggedin, setIsLoggedin] = useState(false);
-
+  const [isLoggedin, setIsLoggedin] = useState(true);
   const [error, setError] = useState();
-
   const [email, setEmail] = useState(null);
   const [password, setPassword] = useState("");
   const [password2, setPassword2] = useState("");
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const viewLogin = (status) => {
     setError(null);
@@ -20,19 +26,68 @@ function Login() {
     console.log(isLoggedin);
   }
 
-  const handleFogottenPassword = (e) => {
-    // const modal = new Modal ("#lostPasswordModal")
-    // modal.show();
-    alert("toto");
+  const openForgottenPasswordModal = (e) => {
+    e.preventDefault();
+    setIsModalOpen(true);
   };
 
   async function handleRenewPassword(e) {
     e.preventDefault();
+    alert(`Envoi d'un email à ${email}`);
+    setIsModalOpen(false);
+    toast.success(
+      `Envoi d'un e-mail à votre adresse : ${email} ; vérifiez votre boite mail !`
+    );
   }
 
+  console.log(email);
   return (
     <STYLEDLoginContainer>
       <STYLEDLoginContainerBox>
+        <ForgottenPasswordModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+        >
+          <STYLEDModalContainer>
+            <i>Envoyer les instructions sur l'adresse mail suivante ?</i>
+            <form onSubmit={handleRenewPassword}>
+              <STYLEDModalInputMail
+                id="email"
+                name="email"
+                type="email"
+                className="form-control"
+                placeholder="Votre adresse email"
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+              <STYLEDModalButtons type="submit">Oui</STYLEDModalButtons>
+              <STYLEDModalButtons
+                type="button"
+                onClick={() => setIsModalOpen(false)}
+              >
+                Non
+              </STYLEDModalButtons>
+            </form>
+          </STYLEDModalContainer>
+        </ForgottenPasswordModal>
+
+        <ToastContainer
+          position="top-center"
+          autoClose={5000}
+          hideProgressBar={false}
+          newestOnTop={true}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="light"
+          toastStyle={{
+            backgroundColor: "var(--background-color)",
+            color: "var(--main-color)",
+          }}
+        />
+
         <STYLEDLoginContainerBoxForm>
           <h2>{isLoggedin ? "Identifiez-vous" : "Enregistrez-vous"}</h2>
           <STYLEDInput
@@ -52,16 +107,18 @@ function Login() {
                 placeholder="Confirmez votre mot de passe ici"
                 onChange={(e) => setPassword2(e.target.value)}
               />
-              <STYLEDLoginCreate onClick={(e) => handleFogottenPassword(e)}>
-                Mot de passe oublié ?
-              </STYLEDLoginCreate>
             </>
           )}
+          <STYLEDLoginCreate onClick={openForgottenPasswordModal}>
+            Mot de passe oublié ?
+          </STYLEDLoginCreate>
+
           <STYLEDSubmit
             type="submit"
             value={isLoggedin ? "S'identifier" : "S'enregistrer"}
             onClick={(e) => handleSubmit(e, isLoggedin ? "login" : "signup")}
           />
+
           {error && <p className="login-error">{error}</p>}
         </STYLEDLoginContainerBoxForm>
 
@@ -74,7 +131,7 @@ function Login() {
                 : "var(--secondary-color)",
             }}
           >
-            S'identifier
+            S'enregistrer
           </STYLEDLoginOptionsButtons>
 
           <STYLEDLoginOptionsButtons
@@ -85,7 +142,7 @@ function Login() {
                 : "var(--main-color)",
             }}
           >
-            S'enregistrer
+            S'identifier
           </STYLEDLoginOptionsButtons>
         </STYLEDLoginOptions>
       </STYLEDLoginContainerBox>
@@ -135,17 +192,37 @@ const STYLEDLoginOptionsButtons = styled.button`
   border: none;
   padding: 10px;
   color: var(--background-color);
+  text-transform:uppercase;
+  font-weight: bold;
 `;
 
 const STYLEDLoginCreate = styled.button`
   border: 1.5px solid var(--main-color);
   color: var(--main-color);
   background-color: var(--background-color);
-  text-transform: uppercase;
 
   &:hover {
     border: 1.5px solid var(--background-color);
     color: var(--secondary-color);
     background-color: var(--main-color);
   }
+`;
+
+const STYLEDModalContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+`;
+
+const STYLEDModalButtons = styled.button`
+  width: 100%;
+  border-radius: 10px;
+  color: var(--main-color);
+  background-color: var(--background-color);
+`;
+const STYLEDModalInputMail = styled.input`
+  width: 100%;
+  color: var(--main-color);
+  background-color: var(--background-color);
 `;
