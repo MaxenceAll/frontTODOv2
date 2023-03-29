@@ -1,6 +1,5 @@
-import React, { useState, useEffect, useRef } from 'react';
-import styled, { keyframes } from 'styled-components';
-
+import React, { useState, useEffect, useRef } from "react";
+import styled, { keyframes } from "styled-components";
 
 const ForgottenPasswordModal = ({ children, isOpen, onClose }) => {
   const [isClosing, setIsClosing] = useState(false);
@@ -11,17 +10,16 @@ const ForgottenPasswordModal = ({ children, isOpen, onClose }) => {
   }, [isOpen]);
 
   useEffect(() => {
-    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
-  const handleClickOutside = e => {
+  const handleClickOutside = (e) => {
     if (modalRef.current && !modalRef.current.contains(e.target)) {
       handleClose();
     }
   };
-
 
   const handleClose = () => {
     setIsClosing(true);
@@ -29,7 +27,10 @@ const ForgottenPasswordModal = ({ children, isOpen, onClose }) => {
   };
 
   return (
-    <ModalWrapper isOpen={isOpen} >
+    <ModalWrapper
+      isOpen={isOpen}
+      aria-label="Formulaire pour récupération de mot de passe"      
+    >
       <ModalContent isClosing={isClosing} ref={modalRef}>
         {children}
       </ModalContent>
@@ -49,7 +50,7 @@ const fadeIn = keyframes`
 `;
 
 const ModalWrapper = styled.div`
-  display: ${props => (props.isOpen ? 'block' : 'none')};
+  display: ${(props) => (props.isOpen ? "block" : "none")};
   position: fixed;
   top: 0;
   bottom: 0;
@@ -57,7 +58,6 @@ const ModalWrapper = styled.div`
   right: 0;
   background-color: rgba(0, 0, 0, 0.85);
   animation: ${fadeIn} 0.8s ease-in-out;
-
 `;
 
 const ModalContent = styled.div`
@@ -70,8 +70,8 @@ const ModalContent = styled.div`
   left: 50%;
   transform: translate(-50%, -50%);
   width: 80%;
-  height:25%;  
-  display:flex;
-  justify-content:center;
-  align-items:center;
+  max-height: 25%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;

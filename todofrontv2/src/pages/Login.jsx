@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -6,6 +6,8 @@ import "react-toastify/dist/ReactToastify.css";
 import styled from "styled-components";
 
 import ForgottenPasswordModal from "../components/Modals/ForgottenPasswordModal";
+
+import { useForm } from 'react-hook-form';
 
 function Login() {
   const [isLoggedin, setIsLoggedin] = useState(true);
@@ -16,6 +18,16 @@ function Login() {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  const passwordForgottenEmailInputRef = useRef(null);
+  const emailInputRef = useRef(null);
+  useEffect(() => {
+    emailInputRef.current.focus();
+    if (isModalOpen) {
+      passwordForgottenEmailInputRef.current.focus();
+    }
+  }, [isModalOpen]);
+
+
   const viewLogin = (status) => {
     setError(null);
     setIsLoggedin(status);
@@ -23,7 +35,7 @@ function Login() {
 
   function handleSubmit(e) {
     e.preventDefault();
-    console.log(isLoggedin);
+    // console.log(isLoggedin);
   }
 
   const openForgottenPasswordModal = (e) => {
@@ -40,7 +52,18 @@ function Login() {
     );
   }
 
-  console.log(email);
+  // console.log("render")
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors }
+  } = useForm();
+
+  const onSubmit = (data) => {
+    console.log(data);
+  };
+
   return (
     <STYLEDLoginContainer>
       <STYLEDLoginContainerBox>
@@ -59,6 +82,7 @@ function Login() {
                 placeholder="Votre adresse email"
                 onChange={(e) => setEmail(e.target.value)}
                 required
+                ref={passwordForgottenEmailInputRef}
               />
               <STYLEDModalButtons type="submit">Oui</STYLEDModalButtons>
               <STYLEDModalButtons
@@ -94,6 +118,7 @@ function Login() {
             type="email"
             placeholder="Saisir votre adresse mail ici"
             onChange={(e) => setEmail(e.target.value)}
+            ref={emailInputRef}
           />
           <STYLEDInput
             type="password"
