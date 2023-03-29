@@ -1,13 +1,27 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import styled, { keyframes } from 'styled-components';
 
 
 const ForgottenPasswordModal = ({ children, isOpen, onClose }) => {
   const [isClosing, setIsClosing] = useState(false);
+  const modalRef = useRef(null);
 
   useEffect(() => {
     setIsClosing(false);
   }, [isOpen]);
+
+  useEffect(() => {
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+  const handleClickOutside = e => {
+    if (modalRef.current && !modalRef.current.contains(e.target)) {
+      handleClose();
+    }
+  };
+
 
   const handleClose = () => {
     setIsClosing(true);
@@ -15,8 +29,8 @@ const ForgottenPasswordModal = ({ children, isOpen, onClose }) => {
   };
 
   return (
-    <ModalWrapper isOpen={isOpen}>
-      <ModalContent isClosing={isClosing}>
+    <ModalWrapper isOpen={isOpen} >
+      <ModalContent isClosing={isClosing} ref={modalRef}>
         {children}
       </ModalContent>
     </ModalWrapper>
