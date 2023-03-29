@@ -1,4 +1,7 @@
 import { useEffect, useRef, useState } from "react";
+import { HiCheck, HiBan } from "react-icons/hi";
+
+import fetcher from "../Helpers/fetcher"
 
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -7,36 +10,26 @@ import styled from "styled-components";
 
 import ForgottenPasswordModal from "../components/Modals/ForgottenPasswordModal";
 
-import { useForm } from 'react-hook-form';
+import { useForm } from "react-hook-form";
 
+{/* TODO: MAKE THIS IN 1 FORM ONLY */}
 function Login() {
-  const [isLoggedin, setIsLoggedin] = useState(true);
-  const [error, setError] = useState();
-  const [email, setEmail] = useState(null);
-  const [password, setPassword] = useState("");
-  const [password2, setPassword2] = useState("");
+  const [display, setDisplay] = useState("login");
 
+  const [email, setEmail] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const passwordForgottenEmailInputRef = useRef(null);
   const emailInputRef = useRef(null);
+
   useEffect(() => {
-    emailInputRef.current.focus();
-    if (isModalOpen) {
+    if (emailInputRef.current) {
+      emailInputRef.current.focus();
+    }
+    if (isModalOpen && passwordForgottenEmailInputRef.current) {
       passwordForgottenEmailInputRef.current.focus();
     }
   }, [isModalOpen]);
-
-
-  const viewLogin = (status) => {
-    setError(null);
-    setIsLoggedin(status);
-  };
-
-  function handleSubmit(e) {
-    e.preventDefault();
-    // console.log(isLoggedin);
-  }
 
   const openForgottenPasswordModal = (e) => {
     e.preventDefault();
@@ -52,15 +45,33 @@ function Login() {
     );
   }
 
-  // console.log("render")
-
   const {
     register,
     handleSubmit,
-    formState: { errors }
+    formState: { errors = "" },
+    reset,
   } = useForm();
 
-  const onSubmit = (data) => {
+  const onSubmit = async(data) => {
+    console.log(data);
+    data.email = data.email.toLowerCase();
+    const resp = await fetcher.post("login", data);
+    if (!resp.result){
+      toast.error(
+        `Oops erreur. Retour de l'api : ${resp.message}`
+      );
+    }
+    console.log(resp);
+    reset();
+  };
+  const onSubmit2 = (data) => {
+    data.email = data.email.toLowerCase();
+    if (data.password !== data.password2) {
+      console.log(errors);
+      toast.error(`Oooooops les mots de passe ne correspondent pas !`);
+      return
+    }
+    reset();
     console.log(data);
   };
 
@@ -112,62 +123,213 @@ function Login() {
           }}
         />
 
-        <STYLEDLoginContainerBoxForm>
-          <h2>{isLoggedin ? "Identifiez-vous" : "Enregistrez-vous"}</h2>
-          <STYLEDInput
-            type="email"
-            placeholder="Saisir votre adresse mail ici"
-            onChange={(e) => setEmail(e.target.value)}
-            ref={emailInputRef}
-          />
-          <STYLEDInput
-            type="password"
-            placeholder="Saisir votre mot de passe ici"
-            onChange={(e) => setPassword(e.target.value)}
-          />
-          {!isLoggedin && (
-            <>
+        {display === "login" && (
+          <STYLEDLoginContainerBoxForm onSubmit={handleSubmit(onSubmit)}>
+            <div>
+              <label>Adresse mail :</label>
               <STYLEDInput
-                type="password"
-                placeholder="Confirmez votre mot de passe ici"
-                onChange={(e) => setPassword2(e.target.value)}
+              ref={emailInputRef}
+                placeholder="Saisir votre adresse mail"
+                type="text"
+                name="email"
+                {...register("email", {
+                  required: "Il faut saisir une adresse mail voyons 1!",
+                  pattern: {
+                    value: /^[^@ ]+@[^@ ]+\.[^@ .]{2,}$/,
+                    message: "Adresse mail invalide",
+                  },
+                })}
+                
               />
-            </>
-          )}
-          <STYLEDLoginCreate onClick={openForgottenPasswordModal}>
-            Mot de passe oublié ?
-          </STYLEDLoginCreate>
+              {errors.email ? <HiBan /> : <HiCheck />}
+            </div>
+            <div>
+              <label>Mot de passe :</label>
+              <STYLEDInput
+                placeholder="Saisir votre mot de passe"
+                type="password"
+                name="password"
+                {...register("password", {
+                  required: true,
+                  validate: {
+                    checkLength: (value) => value.length >= 4,
+                    // matchPattern: (value) =>
+                    //   /(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?!.*\s)(?=.*[!@#$*])/.test(
+                    //     value
+                    //   ),
+                  },
+                })}
+              />
+              {/* TODO: FIX THIS */}
+              {errors.password ? <HiBan /> : <HiCheck />}
+            </div>
+            <div>
+              <label></label>
+              <STYLEDSubmit type="submit">S'identifier</STYLEDSubmit>
+            </div>
 
-          <STYLEDSubmit
-            type="submit"
-            value={isLoggedin ? "S'identifier" : "S'enregistrer"}
-            onClick={(e) => handleSubmit(e, isLoggedin ? "login" : "signup")}
-          />
+            {errors.email && (
+              <STYLEDErrorMessage>{errors.email.message}</STYLEDErrorMessage>
+            )}
+            {/* {errors.password?.type === "matchPattern" && (
+              <p className="errorMsg">
+                Password should contain at least one uppercase letter,
+                lowercase letter, digit, and special symbol.
+              </p>
+            )} */}
+            {errors.password?.type === "required" && (
+              <STYLEDErrorMessage>
+                Il faut saisir un mot de passe voyons !
+              </STYLEDErrorMessage>
+            )}
+            {errors.password?.type === "checkLength" && (
+              <STYLEDErrorMessage>
+                Le mot de passe doit être de 4 signes minimum, bah wé.
+              </STYLEDErrorMessage>
+            )}
+            <STYLEDSubmit onClick={openForgottenPasswordModal}>
+              Mot de passe oublié ?
+            </STYLEDSubmit>
+          </STYLEDLoginContainerBoxForm>
+        )}
 
-          {error && <p className="login-error">{error}</p>}
-        </STYLEDLoginContainerBoxForm>
+        {display === "register" && (
+          <STYLEDLoginContainerBoxForm onSubmit={handleSubmit(onSubmit2)}>
+            <div>
+              <label>Adresse mail :</label>
+              <STYLEDInput
+              ref={emailInputRef}
+                placeholder="Saisir votre adresse mail"
+                type="text"
+                name="email"
+                {...register("email", {
+                  required: "Il faut saisir une adresse mail voyons !",
+                  pattern: {
+                    value: /^[^@ ]+@[^@ ]+\.[^@ .]{2,}$/,
+                    message: "Adresse mail invalide",
+                  },
+                })}
+              />
+              {errors.email ? <HiBan /> : <HiCheck />}
+            </div>
+            <div>
+              <label>Mot de passe :</label>
+              <STYLEDInput
+                placeholder="Saisir votre mot de passe"
+                type="password"
+                name="password"
+                {...register("password", {
+                  required: true,
+                  validate: {
+                    checkLength: (value) => value.length >= 4,
+                    // matchPattern: (value) =>
+                    //   /(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?!.*\s)(?=.*[!@#$*])/.test(
+                    //     value
+                    //   ),
+                  },
+                })}
+                
+              />
+              {errors.password ? <HiBan /> : <HiCheck />}
+            </div>
+
+            <div>
+              <label>------------ :</label>
+              <STYLEDInput
+                placeholder="Valider votre mot de passe"
+                type="password"
+                name="password2"
+                {...register("password2", {
+                  required: true,
+                  validate: {
+                    checkLength: (value) => value.length >= 4,
+                    // matchPattern: (value) =>
+                    //   /(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?!.*\s)(?=.*[!@#$*])/.test(
+                    //     value
+                    //   ),
+                  },
+                })}
+              />
+              {/* TODO: FIX THIS */}
+              {errors.password2 ? <HiBan /> : <HiCheck />}
+            </div>
+
+            <div>
+              <label></label>
+              <STYLEDSubmit type="submit">S'enregistrer</STYLEDSubmit>
+            </div>
+
+            {errors.email && (
+              <STYLEDErrorMessage>{errors.email.message}</STYLEDErrorMessage>
+            )}
+            {/* {errors.password?.type === "matchPattern" && (
+              <p className="errorMsg">
+                Password should contain at least one uppercase letter,
+                lowercase letter, digit, and special symbol.
+              </p>
+            )} */}
+            {errors.password?.type === "required" && (
+              <STYLEDErrorMessage>
+                Il faut saisir un mot de passe voyons !
+              </STYLEDErrorMessage>
+            )}
+            {errors.password?.type === "checkLength" && (
+              <STYLEDErrorMessage>
+                Le mot de passe doit être de 4 signes minimum, bah wé.
+              </STYLEDErrorMessage>
+            )}
+            {/* {errors.password2?.type === "matchPattern" && (
+              <p className="errorMsg">
+                Password should contain at least one uppercase letter,
+                lowercase letter, digit, and special symbol.
+              </p>
+            )} */}
+            {errors.password2?.type === "required" && (
+              <STYLEDErrorMessage>
+                Il faut saisir un mot de passe voyons !
+              </STYLEDErrorMessage>
+            )}
+            {errors.password2?.type === "checkLength" && (
+              <STYLEDErrorMessage>
+                Le mot de passe doit être de 6 signes, bah wé.
+              </STYLEDErrorMessage>
+            )}
+            <STYLEDSubmit onClick={openForgottenPasswordModal}>
+              Mot de passe oublié ?
+            </STYLEDSubmit>
+          </STYLEDLoginContainerBoxForm>
+        )}
 
         <STYLEDLoginOptions>
           <STYLEDLoginOptionsButtons
-            onClick={() => viewLogin(false)}
+            onClick={() => setDisplay("login")}
             style={{
-              backgroundColor: !isLoggedin
-                ? "var(--main-color)"
-                : "var(--secondary-color)",
-            }}
-          >
-            S'enregistrer
-          </STYLEDLoginOptionsButtons>
-
-          <STYLEDLoginOptionsButtons
-            onClick={() => viewLogin(true)}
-            style={{
-              backgroundColor: !isLoggedin
-                ? "var(--secondary-color)"
-                : "var(--main-color)",
+              backgroundColor:
+                display === "login"
+                  ? "var(--main-color)"
+                  : "var(--background-color)",
+              color:
+                display === "login"
+                  ? "var(--secondary-color)"
+                  : "var(--main-color)",
             }}
           >
             S'identifier
+          </STYLEDLoginOptionsButtons>
+          <STYLEDLoginOptionsButtons
+            onClick={() => setDisplay("register")}
+            style={{
+              backgroundColor:
+                display === "register"
+                  ? "var(--main-color)"
+                  : "var(--background-color)",
+              color:
+                display === "register"
+                  ? "var(--secondary-color)"
+                  : "var(--main-color)",
+            }}
+          >
+            S'enregistrer
           </STYLEDLoginOptionsButtons>
         </STYLEDLoginOptions>
       </STYLEDLoginContainerBox>
@@ -177,37 +339,47 @@ function Login() {
 
 export default Login;
 
+const STYLEDLoginContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  margin: 20px;
+`;
+const STYLEDLoginContainerBox = styled.div`
+  width: 100%;
+  max-width: 500px;
+  border-radius: 15px;
+
+  overflow: hidden;
+  box-shadow: rgba(0, 0, 0, 0.05) 0 6px 245px, rgba(0, 0, 0, 0.08) 0 0 0 5px;
+`;
 const STYLEDInput = styled.input`
   color: var(--main-color);
   background-color: var(--background-color);
 `;
-const STYLEDSubmit = styled.input`
+const STYLEDSubmit = styled.button`
   color: var(--main-color);
   background-color: var(--background-color);
   &:hover {
-    border: 1.5px solid var(--background-color);
     color: var(--secondary-color);
     background-color: var(--main-color);
   }
 `;
 
-const STYLEDLoginContainer = styled.div`
-  display: flex;
-  justify-content: center;
-  margin: 20px;
-`;
-
-const STYLEDLoginContainerBox = styled.div`
-  width: 500px;
-  border-radius: 10px;
-  overflow: hidden;
-  box-shadow: rgba(0, 0, 0, 0.05) 0 6px 245px, rgba(0, 0, 0, 0.08) 0 0 0 5px;
-`;
 const STYLEDLoginContainerBoxForm = styled.form`
   display: flex;
   flex-direction: column;
-  height: 250px;
+  justify-content: center;
+  align-items: center;
+  max-height: 250px;
   padding: 25px;
+  display: flex;
+`;
+
+const STYLEDErrorMessage = styled.p`
+  color: red;
+  background-color: lightcoral;
 `;
 const STYLEDLoginOptions = styled.div`
   display: flex;
@@ -217,19 +389,11 @@ const STYLEDLoginOptionsButtons = styled.button`
   border: none;
   padding: 10px;
   color: var(--background-color);
-  text-transform:uppercase;
+  text-transform: uppercase;
   font-weight: bold;
-`;
-
-const STYLEDLoginCreate = styled.button`
-  border: 1.5px solid var(--main-color);
-  color: var(--main-color);
-  background-color: var(--background-color);
-
   &:hover {
-    border: 1.5px solid var(--background-color);
-    color: var(--secondary-color);
-    background-color: var(--main-color);
+    color: var(--background-color) !important;
+    background-color: var(--main-color) !important;
   }
 `;
 
@@ -239,7 +403,6 @@ const STYLEDModalContainer = styled.div`
   justify-content: center;
   align-items: center;
 `;
-
 const STYLEDModalButtons = styled.button`
   width: 100%;
   border-radius: 10px;

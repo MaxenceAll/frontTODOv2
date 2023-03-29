@@ -1,4 +1,4 @@
-import config from "../config";
+import config from "../config.js";
 
 // déclaration de l'objet fetcher
 const fetcher = {};
