@@ -3,6 +3,8 @@ import { useContext } from "react";
 import { ThemeContext } from "../Contexts/ThemeContext";
 import { useCookies } from "react-cookie";
 
+import styled from "styled-components";
+
 function Themes() {
   const { theme, setTheme } = useContext(ThemeContext);
   const [cookies, setCookie] = useCookies(["theme"]);
@@ -58,52 +60,112 @@ function Themes() {
       default:
         break;
     }
-    
   }, [theme]);
 
-
-
-  function handleClick(color) {  
-    setTheme(color);  
+  function handleClick(color) {
+    setTheme(color);
     setCookie("theme", color);
   }
 
   return (
-    <div className="theme-container">
-      <div className="theme-container-box">
-        Choisissez votre thème, theme en cours :  {theme}
-        <div className="theme-options">
-          <button 
-          className={theme === "vert" ? "active" : ""}
-          onClick={() => handleClick("vert")}>Vert</button>
-          <button 
-          className={theme === "rouge" ? "active" : ""}
-          onClick={() => handleClick("rouge")}>Rouge</button>
-          <button 
-          className={theme === "bleu" ? "active" : ""}
-          onClick={() => handleClick("bleu")}>Blue</button>
-          <button 
-          className={theme === "violet" ? "active" : ""}
-          onClick={() => handleClick("violet")}>Violet</button>
-          <button 
-          className={theme === "jaune" ? "active" : ""}
-          onClick={() => handleClick("jaune")}>Jaune</button>
-          <button 
-          className={theme === "cyan" ? "active" : ""}
-          onClick={() => handleClick("cyan")}>Cyan</button>
-          <button 
-          className={theme === "rose" ? "active" : ""}
-          onClick={() => handleClick("rose")}>Rose</button>
-          <button 
-          className={theme === "bronze" ? "active" : ""}
-          onClick={() => handleClick("bronze")}>Bronze</button>
-          <button 
-          className={theme === "blé" ? "active" : ""}
-          onClick={() => handleClick("blé")}>Blé</button>
-        </div>
-      </div>
-    </div>
+    <STYLEDThemeContainer>
+      <STYLEDThemeContainerBox>
+        Choisissez votre thème, theme en cours : {theme}
+        <STYLEDThemeOptions>
+          <STYLEDThemeOptionsButtons
+            className={theme === "vert" ? "active" : ""}
+            onClick={() => handleClick("vert")}
+          >
+            Vert
+          </STYLEDThemeOptionsButtons>
+          <STYLEDThemeOptionsButtons
+            className={theme === "rouge" ? "active" : ""}
+            onClick={() => handleClick("rouge")}
+          >
+            Rouge
+          </STYLEDThemeOptionsButtons>
+          <STYLEDThemeOptionsButtons
+            className={theme === "bleu" ? "active" : ""}
+            onClick={() => handleClick("bleu")}
+          >
+            Blue
+          </STYLEDThemeOptionsButtons>
+          <STYLEDThemeOptionsButtons
+            className={theme === "violet" ? "active" : ""}
+            onClick={() => handleClick("violet")}
+          >
+            Violet
+          </STYLEDThemeOptionsButtons>
+          <STYLEDThemeOptionsButtons
+            className={theme === "jaune" ? "active" : ""}
+            onClick={() => handleClick("jaune")}
+          >
+            Jaune
+          </STYLEDThemeOptionsButtons>
+          <STYLEDThemeOptionsButtons
+            className={theme === "cyan" ? "active" : ""}
+            onClick={() => handleClick("cyan")}
+          >
+            Cyan
+          </STYLEDThemeOptionsButtons>
+          <STYLEDThemeOptionsButtons
+            className={theme === "rose" ? "active" : ""}
+            onClick={() => handleClick("rose")}
+          >
+            Rose
+          </STYLEDThemeOptionsButtons>
+          <STYLEDThemeOptionsButtons
+            className={theme === "bronze" ? "active" : ""}
+            onClick={() => handleClick("bronze")}
+          >
+            Bronze
+          </STYLEDThemeOptionsButtons>
+          <STYLEDThemeOptionsButtons
+            className={theme === "blé" ? "active" : ""}
+            onClick={() => handleClick("blé")}
+          >
+            Blé
+          </STYLEDThemeOptionsButtons>
+        </STYLEDThemeOptions>
+      </STYLEDThemeContainerBox>
+    </STYLEDThemeContainer>
   );
 }
 
 export default Themes;
+
+const STYLEDThemeContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  margin: 20px;
+`;
+
+const STYLEDThemeContainerBox = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  width: 500px;
+  border-radius: 10px;
+  box-shadow: rgba(0, 0, 0, 0.05) 0 6px 245px, rgba(0, 0, 0, 0.08) 0 0 0 5px;
+`;
+const STYLEDThemeOptions = styled.div`
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+`;
+
+const STYLEDThemeOptionsButtons = styled.button`
+  padding: 10px;
+  background-color: var(--secondary-color);
+  color: var(--main-color);
+  border-radius: 10px;
+  &:hover {
+    background-color: var(--main-color);
+    color: var(--background-color);
+  }
+  &:active {
+    background-color: var(--main-color);
+    color: var(--background-color);
+  }
+`;

@@ -36,7 +36,7 @@ function App() {
   useEffect(() => {    
     changeTheme(cookies.theme, setTheme, setCookie);
   }, []);
-  /////////////////////////////////////////////////////// 
+
 
   return (
     <>

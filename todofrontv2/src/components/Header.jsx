@@ -1,3 +1,4 @@
+import styled from "styled-components";
 import {
   HiUser,
   HiInformationCircle,
@@ -9,15 +10,15 @@ import { NavLink } from "react-router-dom";
 
 function Header() {
   return (
-    <header className="layout-header">
-      <h3>📋 TODO List 4000</h3>
-      <div className="header-btn-container">
+    <STYLEDLayoutHeader className="layout-header">
+      <h3>📋 TODO 4000</h3>
+      <STYLEDHeaderBtnContainer className="header-btn-container">
         <NavLink
           to="/"
           className={({ isActive }) => (isActive ? "active-link" : null)}
         >
           <HiHome />
-          <span className="hide-mobile">Home</span>
+          <STYLEDHiddenMobile className="hide-mobile">Home</STYLEDHiddenMobile>
         </NavLink>
 
         <NavLink
@@ -25,7 +26,7 @@ function Header() {
           className={({ isActive }) => (isActive ? "active-link" : null)}
         >
           <HiUser />
-          <span className="hide-mobile">Login</span>
+          <STYLEDHiddenMobile className="hide-mobile">Login</STYLEDHiddenMobile>
         </NavLink>
 
         <NavLink
@@ -33,7 +34,9 @@ function Header() {
           className={({ isActive }) => (isActive ? "active-link" : null)}
         >
           <HiCog />
-          <span className="hide-mobile">Dashboard</span>
+          <STYLEDHiddenMobile className="hide-mobile">
+            Dashboard
+          </STYLEDHiddenMobile>
         </NavLink>
 
         <NavLink
@@ -41,7 +44,7 @@ function Header() {
           className={({ isActive }) => (isActive ? "active-link" : null)}
         >
           <HiAdjustments />
-          <span className="hide-mobile">Theme</span>
+          <STYLEDHiddenMobile className="hide-mobile">Theme</STYLEDHiddenMobile>
         </NavLink>
 
         <NavLink
@@ -49,11 +52,34 @@ function Header() {
           className={({ isActive }) => (isActive ? "active-link" : null)}
         >
           <HiInformationCircle />
-          <span className="hide-mobile">About</span>
+          <STYLEDHiddenMobile className="hide-mobile">About</STYLEDHiddenMobile>
         </NavLink>
-      </div>
-    </header>
+      </STYLEDHeaderBtnContainer>
+    </STYLEDLayoutHeader>
   );
 }
 
 export default Header;
+
+const STYLEDLayoutHeader = styled.div`
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  padding-bottom: 2rem;
+  border-bottom: var(--main-color) 2px solid;
+`;
+const STYLEDHiddenMobile = styled.span`
+  @media only screen and (max-width: 650px) {
+    display: none;
+  }
+`;
+const STYLEDHeaderBtnContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row;
+  gap: 5%;
+  @media only screen and (max-width: 650px) {
+    font-size: 2rem;
+  }
+`;

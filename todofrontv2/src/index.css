@@ -28,147 +28,17 @@ GENERAL
   text-decoration: underline;
   background-color: var(--background-color);
 }
-input[type="email"], input[type="password"],textarea {
-  color: var(--main-color);
-  background-color : var(--background-color); 
-}
 
 /* 
 APP CONTAINER CSS
 */
-.app-container {
-  background-color: var(--secondary-color);
 
-  box-shadow: rgba(0, 0, 0, 0.05) 0 6px 24px, rgba(0, 0, 0, 0.08) 0 0 0 1px;
 
-  padding: 1rem;
-  margin-top: 10px;
 
-  width: 90vw;
-  width: 90dvw;
-
-  min-height: 100vh;
-  /* fall-back */
-  min-height: -moz-available;
-  min-height: -webkit-fill-available;
-  min-height: fill-available;
-
-  display: flex;
-  flex-direction: column;
-
-}
-
-/* 
-HEADER CSS
-*/
-.layout-header {
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
-  padding-bottom: 2rem;
-  border-bottom: var(--main-color) 2px solid;
-}
-
-@media only screen and (max-width: 650px) {
-  .header-btn-container {
-    font-size: 2rem;
-  }
-
-  .hide-mobile {
-    display: none;
-  }
-}
-
-.header-btn-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: row;
-  gap: 5%;
-}
-
-/* 
-FOOTER CSS
-*/
-.footer-container {
-  margin-top: auto;
-  border-top: 2px solid var(--main-color);
-}
-
-/* 
-LOGIN PAGE CSS
-*/
-.login-container{
-  display: flex;
-  justify-content: center;
-  margin: 20px;
-}
-.login-container-box{
-  width: 500px;
-  border-radius: 10px;
-  overflow: hidden;
-  box-shadow: rgba(0, 0, 0, 0.05) 0 6px 245px , rgba(0, 0, 0, 0.08) 0 0 0 5px;
-}
-
-.login-container-box form{
-  display: flex;
-  flex-direction: column;
-  height: 250px;
-  padding: 25px;
-}
-.login-options{
-  display: flex;
-}
-.login-options button{
-  width: 50%;
-  border: none;
-  padding:10px;
-  color: var(--background-color);
-}
-.login-create{
-  border: 1.5px solid var(--main-color);
-  color: var(--main-color);
-  background-color: var(--background-color);
-  text-transform: uppercase;
-}
-.login-create:hover{
-  border: 1.5px solid var(--background-color);
-  color: var(--secondary-color);
-  background-color: var(--main-color);
-}
 
 /* 
 THEME PAGE CSS
 */
-.theme-container{
-  display: flex;
-  justify-content: center;
-  margin: 20px;
-}
-.theme-container-box{
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-  width: 500px;
-  border-radius: 10px;
-  box-shadow: rgba(0, 0, 0, 0.05) 0 6px 245px , rgba(0, 0, 0, 0.08) 0 0 0 5px;    
-}
-.theme-options{
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-}
-.theme-options button{  
-  padding:10px;
-  background-color: var(--secondary-color);
-  color: var(--main-color);
-  border-radius: 10px;
-}
-.theme-options button:hover{  
-  background-color: var(--main-color);
-  color: var(--background-color);
-}
 .theme-options button.active {
   background-color:var(--main-color);
   color: var(--background-color);
