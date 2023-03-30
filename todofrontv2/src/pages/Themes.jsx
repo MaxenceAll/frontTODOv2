@@ -60,6 +60,31 @@ function Themes() {
         root.style.setProperty("--secondary-color", "#4d3d00");
         root.style.setProperty("--background-color", "#2b1d00");
         break;
+        case "orange":
+          root.style.setProperty("--main-color", "#ff8c00");
+          root.style.setProperty("--secondary-color", "#8b2500");
+          root.style.setProperty("--background-color", "#551a00");
+          break;
+        case "gris":
+          root.style.setProperty("--main-color", "#808080");
+          root.style.setProperty("--secondary-color", "#2b2b2b");
+          root.style.setProperty("--background-color", "#1a1a1a");
+          break;
+        case "noir":
+          root.style.setProperty("--main-color", "#000000");
+          root.style.setProperty("--secondary-color", "#262626");
+          root.style.setProperty("--background-color", "#121212");
+          break;
+        case "blanc":
+          root.style.setProperty("--main-color", "#ffffff");
+          root.style.setProperty("--secondary-color", "#e6e6e6");
+          root.style.setProperty("--background-color", "#9c9c9c");
+          break;
+        case "marron":
+          root.style.setProperty("--main-color", "#a52a2a");
+          root.style.setProperty("--secondary-color", "#5a0a0a");
+          root.style.setProperty("--background-color", "#2d0707");
+          break;
       default:
         break;
     }
@@ -146,6 +171,44 @@ function Themes() {
           >
             Blé
           </STYLEDThemeOptionsButtons>
+
+
+
+
+
+          <STYLEDThemeOptionsButtons
+            isActiveTheme={theme === "orange" ? "active" : ""}
+            onClick={() => handleClick("orange")}
+          >
+            Orange
+          </STYLEDThemeOptionsButtons>
+          <STYLEDThemeOptionsButtons
+            isActiveTheme={theme === "gris" ? "active" : ""}
+            onClick={() => handleClick("gris")}
+          >
+            Gris
+          </STYLEDThemeOptionsButtons>
+          <STYLEDThemeOptionsButtons
+            isActiveTheme={theme === "noir" ? "active" : ""}
+            onClick={() => handleClick("noir")}
+          >
+            Noir
+          </STYLEDThemeOptionsButtons>
+          <STYLEDThemeOptionsButtons
+            isActiveTheme={theme === "blanc" ? "active" : ""}
+            onClick={() => handleClick("blanc")}
+          >
+            Blanc
+          </STYLEDThemeOptionsButtons>
+          <STYLEDThemeOptionsButtons
+            isActiveTheme={theme === "marron" ? "active" : ""}
+            onClick={() => handleClick("marron")}
+          >
+            Marron
+          </STYLEDThemeOptionsButtons>
+
+
+
         </STYLEDThemeOptions>
       </STYLEDThemeContainerBox>
     </STYLEDThemeContainer>

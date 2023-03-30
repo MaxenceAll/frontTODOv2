@@ -1,18 +1,19 @@
 import { useEffect, useRef, useState } from "react";
 import { HiCheck, HiBan } from "react-icons/hi";
-
-import fetcher from "../Helpers/fetcher"
-
+import fetcher from "../Helpers/fetcher";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
 import styled from "styled-components";
-
 import ForgottenPasswordModal from "../components/Modals/ForgottenPasswordModal";
-
 import { useForm } from "react-hook-form";
 
-{/* TODO: MAKE THIS IN 1 FORM ONLY */}
+import { useContext } from "react";
+import { AuthContext } from "../Contexts/AuthContext";
+import useCookie from "../Hooks/useCookie";
+
+{
+  /* TODO: MAKE THIS IN 1 FORM ONLY */
+}
 function Login() {
   const [display, setDisplay] = useState("login");
 
@@ -21,6 +22,10 @@ function Login() {
 
   const passwordForgottenEmailInputRef = useRef(null);
   const emailInputRef = useRef(null);
+
+  const { auth, setAuth } = useContext(AuthContext);
+  // console.log("Logged user is:", auth?.data?.email);
+  const [authCookie, setAuthCookie] = useCookie("auth");
 
   useEffect(() => {
     if (emailInputRef.current) {
@@ -45,6 +50,12 @@ function Login() {
     );
   }
 
+  function handleDisconnect(e){
+    // e.preventDefault();
+    setAuth(null);
+    setAuthCookie(null);
+  }
+
   const {
     register,
     handleSubmit,
@@ -52,27 +63,37 @@ function Login() {
     reset,
   } = useForm();
 
-  const onSubmit = async(data) => {
-    console.log(data);
+  const onSubmit = async (data) => {
+    // console.log(data);
     data.email = data.email.toLowerCase();
     const resp = await fetcher.post("login", data);
-    if (!resp.result){
-      toast.error(
-        `Oops erreur. Retour de l'api : ${resp.message}`
-      );
+    if (!resp.result) {
+      toast.error(`Oops erreur. Retour de l'api : ${resp.message}`);
     }
     console.log(resp);
-    reset();
+    setAuth(resp);
+    setAuthCookie(resp.token ?? null, { "max-age": `${60 * 60 * 24}` });    
+    console.log(authCookie);
   };
-  const onSubmit2 = (data) => {
+  const onSubmit2 = async(data) => {
     data.email = data.email.toLowerCase();
-    if (data.password !== data.password2) {
-      console.log(errors);
+    if (data.pincode !== data.pincode2) {
       toast.error(`Oooooops les mots de passe ne correspondent pas !`);
-      return
+      return;
     }
-    reset();
     console.log(data);
+    const resp = await fetcher.post("signup", data);
+    console.log(resp);
+    if (resp.result){
+      console.log("yo its ok");
+      toast.success(`Création faite avec success !`);
+      // TODO AJOUTER LE LOGIN AUTO APRES SIGNUP
+    }
+    else{
+      console.log("yo its not ok");
+      toast.error(`Oooooops erreur lors de la création !`);
+    }
+    // reset();
   };
 
   return (
@@ -123,215 +144,231 @@ function Login() {
           }}
         />
 
-        {display === "login" && (
-          <STYLEDLoginContainerBoxForm onSubmit={handleSubmit(onSubmit)}>
-            <div>
-              <label>Adresse mail :</label>
-              <STYLEDInput
-              ref={emailInputRef}
-                placeholder="Saisir votre adresse mail"
-                type="text"
-                name="email"
-                {...register("email", {
-                  required: "Il faut saisir une adresse mail voyons 1!",
-                  pattern: {
-                    value: /^[^@ ]+@[^@ ]+\.[^@ .]{2,}$/,
-                    message: "Adresse mail invalide",
-                  },
-                })}
-                
-              />
-              {errors.email ? <HiBan /> : <HiCheck />}
-            </div>
-            <div>
-              <label>Mot de passe :</label>
-              <STYLEDInput
-                placeholder="Saisir votre mot de passe"
-                type="password"
-                name="password"
-                {...register("password", {
-                  required: true,
-                  validate: {
-                    checkLength: (value) => value.length >= 4,
-                    // matchPattern: (value) =>
-                    //   /(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?!.*\s)(?=.*[!@#$*])/.test(
-                    //     value
-                    //   ),
-                  },
-                })}
-              />
-              {/* TODO: FIX THIS */}
-              {errors.password ? <HiBan /> : <HiCheck />}
-            </div>
-            <div>
-              <label></label>
-              <STYLEDSubmit type="submit">S'identifier</STYLEDSubmit>
-            </div>
-
-            {errors.email && (
-              <STYLEDErrorMessage>{errors.email.message}</STYLEDErrorMessage>
-            )}
-            {/* {errors.password?.type === "matchPattern" && (
-              <p className="errorMsg">
-                Password should contain at least one uppercase letter,
-                lowercase letter, digit, and special symbol.
-              </p>
-            )} */}
-            {errors.password?.type === "required" && (
-              <STYLEDErrorMessage>
-                Il faut saisir un mot de passe voyons !
-              </STYLEDErrorMessage>
-            )}
-            {errors.password?.type === "checkLength" && (
-              <STYLEDErrorMessage>
-                Le mot de passe doit être de 4 signes minimum, bah wé.
-              </STYLEDErrorMessage>
-            )}
-            <STYLEDSubmit onClick={openForgottenPasswordModal}>
-              Mot de passe oublié ?
-            </STYLEDSubmit>
+        {auth?.data?.email ? (
+          <STYLEDLoginContainerBoxForm>
+            <p>Bonjour, {auth?.data?.email}</p>
+            <STYLEDSubmit type="button" onClick={(e)=>handleDisconnect(e)}>Se déconnecter</STYLEDSubmit>
           </STYLEDLoginContainerBoxForm>
-        )}
+        ) : (
+          <>
+            {display === "login" && (
+              <STYLEDLoginContainerBoxForm onSubmit={handleSubmit(onSubmit)}>
+                <div>
+                  <label>Adresse mail :</label>
+                  <STYLEDInput
+                    ref={emailInputRef}
+                    autoComplete="username"
+                    placeholder="Saisir votre adresse mail"
+                    type="text"
+                    name="email"
+                    {...register("email", {
+                      required: "Il faut saisir une adresse mail voyons !",
+                      pattern: {
+                        value: /^[^@ ]+@[^@ ]+\.[^@ .]{2,}$/,
+                        message: "Adresse mail invalide",
+                      },
+                    })}
+                  />
+                  {errors.email ? <HiBan /> : <HiCheck />}
+                </div>
+                <div>
+                  <label>Mot de passe :</label>
+                  <STYLEDInput
+                    placeholder="Saisir votre mot de passe"
+                    autoComplete="current-password"
+                    type="password"                    
+                    name="pincode"
+                    {...register("pincode", {
+                      required: true,
+                      validate: {
+                        checkLength: (value) => value.length >= 4,
+                        // matchPattern: (value) =>
+                        //   /(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?!.*\s)(?=.*[!@#$*])/.test(
+                        //     value
+                        //   ),
+                      },
+                    })}
+                  />
+                  {/* TODO: FIX THIS */}
+                  {errors.pincode ? <HiBan /> : <HiCheck />}
+                </div>
+                <div>
+                  <label></label>
+                  <STYLEDSubmit type="submit">S'identifier</STYLEDSubmit>
+                </div>
 
-        {display === "register" && (
-          <STYLEDLoginContainerBoxForm onSubmit={handleSubmit(onSubmit2)}>
-            <div>
-              <label>Adresse mail :</label>
-              <STYLEDInput
-              ref={emailInputRef}
-                placeholder="Saisir votre adresse mail"
-                type="text"
-                name="email"
-                {...register("email", {
-                  required: "Il faut saisir une adresse mail voyons !",
-                  pattern: {
-                    value: /^[^@ ]+@[^@ ]+\.[^@ .]{2,}$/,
-                    message: "Adresse mail invalide",
-                  },
-                })}
-              />
-              {errors.email ? <HiBan /> : <HiCheck />}
-            </div>
-            <div>
-              <label>Mot de passe :</label>
-              <STYLEDInput
-                placeholder="Saisir votre mot de passe"
-                type="password"
-                name="password"
-                {...register("password", {
-                  required: true,
-                  validate: {
-                    checkLength: (value) => value.length >= 4,
-                    // matchPattern: (value) =>
-                    //   /(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?!.*\s)(?=.*[!@#$*])/.test(
-                    //     value
-                    //   ),
-                  },
-                })}
-                
-              />
-              {errors.password ? <HiBan /> : <HiCheck />}
-            </div>
-
-            <div>
-              <label>------------ :</label>
-              <STYLEDInput
-                placeholder="Valider votre mot de passe"
-                type="password"
-                name="password2"
-                {...register("password2", {
-                  required: true,
-                  validate: {
-                    checkLength: (value) => value.length >= 4,
-                    // matchPattern: (value) =>
-                    //   /(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?!.*\s)(?=.*[!@#$*])/.test(
-                    //     value
-                    //   ),
-                  },
-                })}
-              />
-              {/* TODO: FIX THIS */}
-              {errors.password2 ? <HiBan /> : <HiCheck />}
-            </div>
-
-            <div>
-              <label></label>
-              <STYLEDSubmit type="submit">S'enregistrer</STYLEDSubmit>
-            </div>
-
-            {errors.email && (
-              <STYLEDErrorMessage>{errors.email.message}</STYLEDErrorMessage>
-            )}
-            {/* {errors.password?.type === "matchPattern" && (
+                {errors.email && (
+                  <STYLEDErrorMessage>
+                    {errors.email.message}
+                  </STYLEDErrorMessage>
+                )}
+                {/* {errors.pincode?.type === "matchPattern" && (
               <p className="errorMsg">
                 Password should contain at least one uppercase letter,
                 lowercase letter, digit, and special symbol.
               </p>
             )} */}
-            {errors.password?.type === "required" && (
-              <STYLEDErrorMessage>
-                Il faut saisir un mot de passe voyons !
-              </STYLEDErrorMessage>
+                {errors.pincode?.type === "required" && (
+                  <STYLEDErrorMessage>
+                    Il faut saisir un mot de passe voyons !
+                  </STYLEDErrorMessage>
+                )}
+                {errors.pincode?.type === "checkLength" && (
+                  <STYLEDErrorMessage>
+                    Le mot de passe doit être de 4 signes minimum, bah wé.
+                  </STYLEDErrorMessage>
+                )}
+                <STYLEDSubmit onClick={openForgottenPasswordModal}>
+                  Mot de passe oublié ?
+                </STYLEDSubmit>
+              </STYLEDLoginContainerBoxForm>
             )}
-            {errors.password?.type === "checkLength" && (
-              <STYLEDErrorMessage>
-                Le mot de passe doit être de 4 signes minimum, bah wé.
-              </STYLEDErrorMessage>
-            )}
-            {/* {errors.password2?.type === "matchPattern" && (
+
+            {display === "register" && (
+              <STYLEDLoginContainerBoxForm onSubmit={handleSubmit(onSubmit2)}>
+                <div>
+                  <label>Adresse mail :</label>
+                  <STYLEDInput
+                    ref={emailInputRef}
+                    autoComplete="username"
+                    placeholder="Saisir votre adresse mail"
+                    type="text"
+                    name="email"
+                    {...register("email", {
+                      required: "Il faut saisir une adresse mail voyons !",
+                      pattern: {
+                        value: /^[^@ ]+@[^@ ]+\.[^@ .]{2,}$/,
+                        message: "Adresse mail invalide",
+                      },
+                    })}
+                  />
+                  {errors.email ? <HiBan /> : <HiCheck />}
+                </div>
+                <div>
+                  <label>Mot de passe :</label>
+                  <STYLEDInput
+                    placeholder="Saisir votre mot de passe"
+                    autoComplete="current-password"
+                    type="password"
+                    name="pincode"
+                    {...register("pincode", {
+                      required: true,
+                      validate: {
+                        checkLength: (value) => value.length >= 4,
+                        // matchPattern: (value) =>
+                        //   /(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?!.*\s)(?=.*[!@#$*])/.test(
+                        //     value
+                        //   ),
+                      },
+                    })}
+                  />
+                  {errors.pincode ? <HiBan /> : <HiCheck />}
+                </div>
+
+                <div>
+                  <label>------------ :</label>
+                  <STYLEDInput
+                    placeholder="Valider votre mot de passe"
+                    autoComplete="current-password"
+                    type="password"
+                    name="pincode2"
+                    {...register("pincode2", {
+                      required: true,
+                      validate: {
+                        checkLength: (value) => value.length >= 4,
+                        // matchPattern: (value) =>
+                        //   /(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?!.*\s)(?=.*[!@#$*])/.test(
+                        //     value
+                        //   ),
+                      },
+                    })}
+                  />
+                  {/* TODO: FIX THIS */}
+                  {errors.pincode2 ? <HiBan /> : <HiCheck />}
+                </div>
+
+                <div>
+                  <label></label>
+                  <STYLEDSubmit type="submit">S'enregistrer</STYLEDSubmit>
+                </div>
+
+                {errors.email && (
+                  <STYLEDErrorMessage>
+                    {errors.email.message}
+                  </STYLEDErrorMessage>
+                )}
+                {/* {errors.pincode2?.type === "matchPattern" && (
               <p className="errorMsg">
                 Password should contain at least one uppercase letter,
                 lowercase letter, digit, and special symbol.
               </p>
             )} */}
-            {errors.password2?.type === "required" && (
-              <STYLEDErrorMessage>
-                Il faut saisir un mot de passe voyons !
-              </STYLEDErrorMessage>
+                {errors.pincode2?.type === "required" && (
+                  <STYLEDErrorMessage>
+                    Il faut saisir un mot de passe voyons !
+                  </STYLEDErrorMessage>
+                )}
+                {errors.pincode2?.type === "checkLength" && (
+                  <STYLEDErrorMessage>
+                    Le mot de passe doit être de 4 signes minimum, bah wé.
+                  </STYLEDErrorMessage>
+                )}
+                {/* {errors.pincode2?.type === "matchPattern" && (
+              <p className="errorMsg">
+                Password should contain at least one uppercase letter,
+                lowercase letter, digit, and special symbol.
+              </p>
+            )} */}
+                {errors.pincode2?.type === "required" && (
+                  <STYLEDErrorMessage>
+                    Il faut saisir un mot de passe voyons !
+                  </STYLEDErrorMessage>
+                )}
+                {errors.pincode2?.type === "checkLength" && (
+                  <STYLEDErrorMessage>
+                    Le mot de passe doit être de 6 signes, bah wé.
+                  </STYLEDErrorMessage>
+                )}
+                <STYLEDSubmit onClick={openForgottenPasswordModal}>
+                  Mot de passe oublié ?
+                </STYLEDSubmit>
+              </STYLEDLoginContainerBoxForm>
             )}
-            {errors.password2?.type === "checkLength" && (
-              <STYLEDErrorMessage>
-                Le mot de passe doit être de 6 signes, bah wé.
-              </STYLEDErrorMessage>
-            )}
-            <STYLEDSubmit onClick={openForgottenPasswordModal}>
-              Mot de passe oublié ?
-            </STYLEDSubmit>
-          </STYLEDLoginContainerBoxForm>
-        )}
 
-        <STYLEDLoginOptions>
-          <STYLEDLoginOptionsButtons
-            onClick={() => setDisplay("login")}
-            style={{
-              backgroundColor:
-                display === "login"
-                  ? "var(--main-color)"
-                  : "var(--background-color)",
-              color:
-                display === "login"
-                  ? "var(--secondary-color)"
-                  : "var(--main-color)",
-            }}
-          >
-            S'identifier
-          </STYLEDLoginOptionsButtons>
-          <STYLEDLoginOptionsButtons
-            onClick={() => setDisplay("register")}
-            style={{
-              backgroundColor:
-                display === "register"
-                  ? "var(--main-color)"
-                  : "var(--background-color)",
-              color:
-                display === "register"
-                  ? "var(--secondary-color)"
-                  : "var(--main-color)",
-            }}
-          >
-            S'enregistrer
-          </STYLEDLoginOptionsButtons>
-        </STYLEDLoginOptions>
+            <STYLEDLoginOptions>
+              <STYLEDLoginOptionsButtons
+                onClick={() => setDisplay("login")}
+                style={{
+                  backgroundColor:
+                    display === "login"
+                      ? "var(--main-color)"
+                      : "var(--background-color)",
+                  color:
+                    display === "login"
+                      ? "var(--secondary-color)"
+                      : "var(--main-color)",
+                }}
+              >
+                S'identifier
+              </STYLEDLoginOptionsButtons>
+              <STYLEDLoginOptionsButtons
+                onClick={() => setDisplay("register")}
+                style={{
+                  backgroundColor:
+                    display === "register"
+                      ? "var(--main-color)"
+                      : "var(--background-color)",
+                  color:
+                    display === "register"
+                      ? "var(--secondary-color)"
+                      : "var(--main-color)",
+                }}
+              >
+                S'enregistrer
+              </STYLEDLoginOptionsButtons>
+            </STYLEDLoginOptions>
+          </>
+        )}
       </STYLEDLoginContainerBox>
     </STYLEDLoginContainer>
   );
