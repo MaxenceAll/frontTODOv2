@@ -10,6 +10,7 @@ import { useForm } from "react-hook-form";
 import { useContext } from "react";
 import { AuthContext } from "../Contexts/AuthContext";
 import useCookie from "../Hooks/useCookie";
+import ButtonReturnToHome from "../components/ButtonReturnToHome";
 
 {
   /* TODO: MAKE THIS IN 1 FORM ONLY */
@@ -43,17 +44,28 @@ function Login() {
 
   async function handleRenewPassword(e) {
     e.preventDefault();
-    alert(`Envoi d'un email à ${email}`);
+    const emailObject = { email };
+    console.log(emailObject)
+    const resp = await fetcher.post("renew", emailObject);
+    console.log(resp)
     setIsModalOpen(false);
-    toast.success(
-      `Envoi d'un e-mail à votre adresse : ${email} ; vérifiez votre boite mail !`
-    );
+    if (resp.result){
+      toast.success(
+        `Envoi d'un e-mail à votre adresse : ${resp.data.accepted} ; vérifiez votre boite mail !`
+      );
+    }else {
+      if (resp.message)
+      toast.error(
+        `Ooops erreur, retour de l'api : ${resp.data.message}`
+      )
+    }
   }
 
-  function handleDisconnect(e){
+  function handleDisconnect(e) {
     // e.preventDefault();
     setAuth(null);
     setAuthCookie(null);
+    toast.info(`Deconnexion avec succes.`)
   }
 
   const {
@@ -69,13 +81,15 @@ function Login() {
     const resp = await fetcher.post("login", data);
     if (!resp.result) {
       toast.error(`Oops erreur. Retour de l'api : ${resp.message}`);
-    }
+    }else{
     console.log(resp);
+    toast.success(<ButtonReturnToHome/>)
     setAuth(resp);
-    setAuthCookie(resp.token ?? null, { "max-age": `${60 * 60 * 24}` });    
+    setAuthCookie(resp.token ?? null, { "max-age": `${60 * 60 * 24}` });
     console.log(authCookie);
+  }
   };
-  const onSubmit2 = async(data) => {
+  const onSubmit2 = async (data) => {
     data.email = data.email.toLowerCase();
     if (data.pincode !== data.pincode2) {
       toast.error(`Oooooops les mots de passe ne correspondent pas !`);
@@ -84,12 +98,12 @@ function Login() {
     console.log(data);
     const resp = await fetcher.post("signup", data);
     console.log(resp);
-    if (resp.result){
+    if (resp.result) {
       console.log("yo its ok");
-      toast.success(`Création faite avec success !`);
+      toast.success(`Création faite avec success ! Vérifiez votre compte avec votre adresse mail : ${data.email}`);
       // TODO AJOUTER LE LOGIN AUTO APRES SIGNUP
-    }
-    else{
+    } else {
+      // TODO PB ici avec le toast (vérifier le json de retour (la structure))
       console.log("yo its not ok");
       toast.error(`Oooooops erreur lors de la création !`);
     }
@@ -98,6 +112,23 @@ function Login() {
 
   return (
     <STYLEDLoginContainer>
+      <ToastContainer
+        position="top-center"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={true}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+        toastStyle={{
+          backgroundColor: "var(--background-color)",
+          color: "var(--main-color)",
+        }}
+      />
+
       <STYLEDLoginContainerBox>
         <ForgottenPasswordModal
           isOpen={isModalOpen}
@@ -127,27 +158,12 @@ function Login() {
           </STYLEDModalContainer>
         </ForgottenPasswordModal>
 
-        <ToastContainer
-          position="top-center"
-          autoClose={5000}
-          hideProgressBar={false}
-          newestOnTop={true}
-          closeOnClick
-          rtl={false}
-          pauseOnFocusLoss
-          draggable
-          pauseOnHover
-          theme="light"
-          toastStyle={{
-            backgroundColor: "var(--background-color)",
-            color: "var(--main-color)",
-          }}
-        />
-
         {auth?.data?.email ? (
           <STYLEDLoginContainerBoxForm>
             <p>Bonjour, {auth?.data?.email}</p>
-            <STYLEDSubmit type="button" onClick={(e)=>handleDisconnect(e)}>Se déconnecter</STYLEDSubmit>
+            <STYLEDSubmit type="button" onClick={(e) => handleDisconnect(e)}>
+              Se déconnecter
+            </STYLEDSubmit>
           </STYLEDLoginContainerBoxForm>
         ) : (
           <>
@@ -176,7 +192,7 @@ function Login() {
                   <STYLEDInput
                     placeholder="Saisir votre mot de passe"
                     autoComplete="current-password"
-                    type="password"                    
+                    type="password"
                     name="pincode"
                     {...register("pincode", {
                       required: true,

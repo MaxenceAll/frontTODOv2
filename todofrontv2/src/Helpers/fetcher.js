@@ -22,6 +22,7 @@ const request = async (endpoint, params, method = "get", body = null ) =>
     // console.log(url)
     if (body && method !== "get") {
         options.body = JSON.stringify(body);
+        console.log(options.body)
     }
     try
     {
@@ -34,7 +35,7 @@ const request = async (endpoint, params, method = "get", body = null ) =>
     }
     catch (error)
     {
-        console.log("catch!")
+        console.log("catch! got: ",error.message)
         return {data: null, result: false, message: error};
     }
 }
