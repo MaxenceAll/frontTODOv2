@@ -1,6 +1,6 @@
 import { useContext } from "react";
 import { AuthContext } from "../Contexts/AuthContext";
-import { useGetAllTodos } from "../features/todosSlice";
+import { useGetAllTodos, useGetAllTodosByEmail } from "../features/todosSlice";
 
 
 // TESTS AVEC RTK QUERIES (de redux)
@@ -10,13 +10,23 @@ export const Home = () => {
     console.log(auth);
 
 
+  // const {
+  //   data: allTodos,
+  //   error,
+  //   isError,
+  //   isLoading,
+  //   isSuccess,
+  // } = useGetAllTodos();
+
   const {
     data: allTodos,
     error,
     isError,
     isLoading,
     isSuccess,
-  } = useGetAllTodos();
+  } = useGetAllTodosByEmail(auth.data.email);
+
+
 
 //   console.log(useGetAllTodos());
 //   console.log(allTodos);

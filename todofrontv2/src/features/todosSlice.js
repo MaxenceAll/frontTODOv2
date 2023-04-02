@@ -18,16 +18,36 @@ export const todosApi = createApi({
     getAllTodos: builder.query({
       query: () => "todo",
       transformResponse: (response) => {
-        // console.log(response); 
+        // console.log(response);
         // SORTING les todos par id (obligé de décomposer l'objet et le recomposer pour garder la structure originelle)
         const sortedData = response.data.sort((a, b) => b.id - a.id);
-        return { data: sortedData, result: response.result, message: response.message };
-      }      
+        return {
+          data: sortedData,
+          result: response.result,
+          message: response.message,
+        };
+      },
+    }),
+    
+    getAllTodosByEmail: builder.query({
+      query: () => "todo/table",
     }),
 
-    
-
+    getAllTodosByEmail: builder.query({
+      query: (email) => `todo/table/${email}`,
+      transformResponse: (response) => {
+        // SORTING les todos par id (obligé de décomposer l'objet et le recomposer pour garder la structure originelle)
+        const sortedData = response.data.sort((a, b) => b.id - a.id);
+        return {
+          data: sortedData,
+          result: response.result,
+          message: response.message,
+        };
+      },
+    }),
   }),
 });
 
 export const useGetAllTodos = todosApi.endpoints.getAllTodos.useQuery;
+export const useGetAllTodosByEmail =
+  todosApi.endpoints.getAllTodosByEmail.useQuery;

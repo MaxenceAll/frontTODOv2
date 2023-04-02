@@ -5,8 +5,9 @@ function Footer() {
   return (
     <STYLEDFooterContainer>
 
-
-        <DateDuJour  />{import.meta.env.VITE_APP_NAME} © 
+        ALLART Maxence
+        <DateDuJour  />
+        {import.meta.env.VITE_APP_NAME} © 
 
     </STYLEDFooterContainer>
   );
