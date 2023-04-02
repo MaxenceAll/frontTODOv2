@@ -1,62 +1,50 @@
-import React, { useContext } from "react";
+import { useContext } from "react";
 import { AuthContext } from "../Contexts/AuthContext";
-import styled from "styled-components";
-import { useNavigate } from "react-router-dom";
-import TodoList from "../components/Todo/TodoList";
+import { useGetAllTodos } from "../features/todosSlice";
 
-import {
-  useGetTodosQuery,
-  useGetTodosForCustomerQuery,
-} from "../features/api/ApiSlice";
 
-function Home() {
-  const { auth, setAuth } = useContext(AuthContext);
-  const navigate = useNavigate();
-  console.log(auth);
+// TESTS AVEC RTK QUERIES (de redux)
+export const Home = () => {
 
-  const { data, isLoading, isSuccess, isError, error } =
-    useGetTodosForCustomerQuery(auth?.data?.email);
+    const { auth, setAuth } = useContext(AuthContext);
+    console.log(auth);
+
+
+  const {
+    data: allTodos,
+    error,
+    isError,
+    isLoading,
+    isSuccess,
+  } = useGetAllTodos();
+
+//   console.log(useGetAllTodos());
+//   console.log(allTodos);
 
   let content;
-  if (isLoading) {
-    content = <p>Loading ...</p>;
-  } else if (isSuccess) {
-    content = data;
-  } else if (isError) {
-    content = <p>{error}</p>;
+  if (isSuccess) {
+    content = (
+        <ul>
+          {allTodos?.data?.map((item) => (
+            <li key={item.id}>{item.title} : {item.description}</li>
+          )) ?? null}
+        </ul>
+      );
+  }
+  if (isError) {
+    content = (
+      <div>
+        <h1>Error numéro : {error.status}</h1>
+        <p>Retour de l'api : {error.data?.message ?? 'Oops une erreur inconnue'}</p>
+      </div>
+    )
   }
 
+  if (isLoading) return <h1> Loading...</h1>;
   return (
-    <div>
-      Bienvenue,
-      {auth?.data?.email ? (
-        <div>
-          {[auth?.data?.email]}
-          <div>
-            {isSuccess && <TodoList todos={content} />}
-            {isLoading && content}
-            {isError && content}
-          </div>
-        </div>
-      ) : (
-        <p>
-          Connectez-vous pour voir vos TODOs
-          <STYLEDButton onClick={() => navigate("/login")}>
-            Je me connecte
-          </STYLEDButton>
-        </p>
-      )}
-    </div>
+    <>
+      <div> Coucou {auth?.data?.email} , voici vos todos:</div>
+      <div>{content}</div>
+    </>
   );
-}
-
-export default Home;
-
-const STYLEDButton = styled.button`
-  color: var(--main-color);
-  background-color: var(--background-color);
-  &:hover {
-    color: var(--secondary-color);
-    background-color: var(--main-color);
-  }
-`;
+};

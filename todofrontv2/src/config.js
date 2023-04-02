@@ -1,3 +1,5 @@
+// PS: le token authorization est créé via l'api (on utilise jwt pour créer une correspondance entre une clé secrete tappée dans l'api)
+
 const config = {
     development: {
       api: {

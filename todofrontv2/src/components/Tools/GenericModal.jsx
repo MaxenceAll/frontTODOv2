@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import styled, { keyframes } from "styled-components";
 
-const ForgottenPasswordModal = ({ children, isOpen, onClose }) => {
+const GenericModal = ({ children, isOpen, onClose , props}) => {
   const [isClosing, setIsClosing] = useState(false);
   const modalRef = useRef(null);
 
@@ -29,7 +29,7 @@ const ForgottenPasswordModal = ({ children, isOpen, onClose }) => {
   return (
     <ModalWrapper
       isOpen={isOpen}
-      aria-label="Formulaire pour récupération de mot de passe"      
+      aria-label={props?.ariaLabelMessage}
     >
       <ModalContent isClosing={isClosing} ref={modalRef}>
         {children}
@@ -38,7 +38,7 @@ const ForgottenPasswordModal = ({ children, isOpen, onClose }) => {
   );
 };
 
-export default ForgottenPasswordModal;
+export default GenericModal;
 
 const fadeIn = keyframes`
   from {
@@ -68,7 +68,7 @@ const ModalContent = styled.div`
   position: absolute;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -180%);
+  transform: translate(-50%, -50%);
   width: 80%;
   max-height: 25%;
   display: flex;

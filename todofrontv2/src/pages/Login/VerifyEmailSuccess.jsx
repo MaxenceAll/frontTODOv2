@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import ButtonReturnToLogin from "../components/ButtonReturnToLogin";
+import ButtonReturnToLogin from "../../components/Tools/ButtonReturnToLogin";
 
 const VerifyEmailSuccess = () => {
   return (

@@ -9,9 +9,12 @@ import {
 import { NavLink } from "react-router-dom";
 
 function Header() {
+
+
+
   return (
     <STYLEDLayoutHeader className="layout-header">
-      <h3>📋 TODO 4000</h3>
+      <h3>{import.meta.env.VITE_APP_NAME}</h3>
       <STYLEDHeaderBtnContainer className="header-btn-container">
         <NavLink
           to="/"
@@ -52,7 +55,7 @@ function Header() {
           className={({ isActive }) => (isActive ? "active-link" : null)}
         >
           <HiInformationCircle />
-          <STYLEDHiddenMobile className="hide-mobile">About</STYLEDHiddenMobile>
+          <STYLEDHiddenMobile className="hide-mobile">Apropos</STYLEDHiddenMobile>
         </NavLink>
       </STYLEDHeaderBtnContainer>
     </STYLEDLayoutHeader>

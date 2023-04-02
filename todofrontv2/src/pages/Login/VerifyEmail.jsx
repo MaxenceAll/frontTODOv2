@@ -1,9 +1,10 @@
 import React from "react";
-import fetcher from "../Helpers/fetcher";
+
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import ButtonReturnToLogin from "../components/ButtonReturnToLogin";
+import ButtonReturnToLogin from "../../components/Tools/ButtonReturnToLogin";
 import { useLocation } from "react-router-dom";
+import fetcher from "../../Helpers/fetcher";
 
 function VerifyEmail() {
 

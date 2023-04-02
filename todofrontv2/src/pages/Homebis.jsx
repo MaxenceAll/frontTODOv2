@@ -3,6 +3,8 @@ import axios from "axios";
 import config from "../config";
 import { AuthContext } from "../Contexts/AuthContext";
 
+
+// TEST AVEC AXIOS
 function Homebis() {
   const { auth, setAuth } = useContext(AuthContext);
   const [tableData, setTableData] = useState([]);

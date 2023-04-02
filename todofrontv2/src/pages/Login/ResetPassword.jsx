@@ -5,8 +5,9 @@ import { HiCheck, HiBan } from "react-icons/hi";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useSearchParams } from "react-router-dom";
-import fetcher from "../Helpers/fetcher";
-import ButtonReturnToLogin from "../components/ButtonReturnToLogin";
+
+import ButtonReturnToLogin from "../../components/Tools/ButtonReturnToLogin";
+import fetcher from "../../Helpers/fetcher";
 
 function ResetPassword() {
 

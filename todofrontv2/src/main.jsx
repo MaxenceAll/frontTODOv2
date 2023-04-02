@@ -5,17 +5,27 @@ import { AuthContextProvider } from "./Contexts/AuthContext";
 import { ThemeContextProvider } from "./Contexts/ThemeContext";
 import "./index.css";
 
-import { ApiProvider } from "@reduxjs/toolkit/dist/query/react";
-import { apiSlice } from "./features/api/ApiSlice";
+import { Provider } from "react-redux";
+import { ApiProvider } from "@reduxjs/toolkit/query/react";
+import { todosApi } from "./features/todosSlice";
+import { store } from "./store";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
-    <AuthContextProvider>
-      <ApiProvider api={apiSlice}>
-        <ThemeContextProvider>
-          <App />
-        </ThemeContextProvider>
+    
+    
+    <Provider store={store}>
+      <ApiProvider api={todosApi}>
+
+
+        <AuthContextProvider>
+          <ThemeContextProvider>
+            <App />
+          </ThemeContextProvider>
+        </AuthContextProvider>
+
+
       </ApiProvider>
-    </AuthContextProvider>
+    </Provider>
   </React.StrictMode>
 );

@@ -7,6 +7,9 @@ import styled from "styled-components";
 
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { STYLEDButton } from "../styles/genericButton";
+import { STYLEDContainer, STYLEDContainerBox } from "../styles/genericContainer";
+import { STYLEDhr } from "../styles/genericHR";
 
 function Themes() {
   const { theme, setTheme } = useContext(ThemeContext);
@@ -98,11 +101,12 @@ function Themes() {
 
 
   return (
-    <STYLEDThemeContainer>
+    <STYLEDContainer>
+      <STYLEDContainerBox>
 
       <ToastContainer
-        position="bottom-center"
-        autoClose={1000}
+        position="top-center"
+        autoClose={5000}
         hideProgressBar={false}
         newestOnTop={true}
         closeOnClick
@@ -111,148 +115,119 @@ function Themes() {
         draggable
         pauseOnHover
         theme="light"
-        toastStyle={{ backgroundColor: "var(--secondary-color)" , color: "var(--main-color)"}}
+        toastStyle={{
+          backgroundColor: "var(--background-color)",
+          color: "var(--main-color)",
+        }}
       />
 
-      <STYLEDThemeContainerBox>
+
+
         Choisissez votre thème, theme en cours : {theme}
+
+        <STYLEDhr />
+        
         <STYLEDThemeOptions>
-          <STYLEDThemeOptionsButtons
+          <STYLEDButton height="25px" width="80%"
             isActiveTheme={theme === "vert" ? "active" : ""}
             onClick={() => handleClick("vert")}
           >
             Vert
-          </STYLEDThemeOptionsButtons>
-          <STYLEDThemeOptionsButtons
+          </STYLEDButton>
+          <STYLEDButton height="25px" width="80%"
             isActiveTheme={theme === "rouge" ? "active" : ""}
             onClick={() => handleClick("rouge")}
           >
             Rouge
-          </STYLEDThemeOptionsButtons>
-          <STYLEDThemeOptionsButtons
+          </STYLEDButton>
+          <STYLEDButton height="25px" width="80%"
             isActiveTheme={theme === "bleu" ? "active" : ""}
             onClick={() => handleClick("bleu")}
           >
             Blue
-          </STYLEDThemeOptionsButtons>
-          <STYLEDThemeOptionsButtons
+          </STYLEDButton>
+          <STYLEDButton height="25px" width="80%"
             isActiveTheme={theme === "violet" ? "active" : ""}
             onClick={() => handleClick("violet")}
           >
             Violet
-          </STYLEDThemeOptionsButtons>
-          <STYLEDThemeOptionsButtons
+          </STYLEDButton>
+          <STYLEDButton height="25px" width="80%"
             isActiveTheme={theme === "jaune" ? "active" : ""}
             onClick={() => handleClick("jaune")}
           >
             Jaune
-          </STYLEDThemeOptionsButtons>
-          <STYLEDThemeOptionsButtons
+          </STYLEDButton>
+          <STYLEDButton height="25px" width="80%"
             isActiveTheme={theme === "cyan" ? "active" : ""}
             onClick={() => handleClick("cyan")}
           >
             Cyan
-          </STYLEDThemeOptionsButtons>
-          <STYLEDThemeOptionsButtons
+          </STYLEDButton>
+          <STYLEDButton height="25px" width="80%"
             isActiveTheme={theme === "rose" ? "active" : ""}
             onClick={() => handleClick("rose")}
           >
             Rose
-          </STYLEDThemeOptionsButtons>
-          <STYLEDThemeOptionsButtons
+          </STYLEDButton>
+          <STYLEDButton height="25px" width="80%"
             isActiveTheme={theme === "bronze" ? "active" : ""}
             onClick={() => handleClick("bronze")}
           >
             Bronze
-          </STYLEDThemeOptionsButtons>
-          <STYLEDThemeOptionsButtons
+          </STYLEDButton>
+          <STYLEDButton height="25px" width="80%"
             isActiveTheme={theme === "blé" ? "active" : ""}
             onClick={() => handleClick("blé")}
           >
             Blé
-          </STYLEDThemeOptionsButtons>
+          </STYLEDButton>
 
-
-
-
-
-          <STYLEDThemeOptionsButtons
+          <STYLEDButton height="25px" width="80%"
             isActiveTheme={theme === "orange" ? "active" : ""}
             onClick={() => handleClick("orange")}
           >
             Orange
-          </STYLEDThemeOptionsButtons>
-          <STYLEDThemeOptionsButtons
+          </STYLEDButton>
+          <STYLEDButton height="25px" width="80%"
             isActiveTheme={theme === "gris" ? "active" : ""}
             onClick={() => handleClick("gris")}
           >
             Gris
-          </STYLEDThemeOptionsButtons>
-          <STYLEDThemeOptionsButtons
+          </STYLEDButton>
+          <STYLEDButton height="25px" width="80%"
             isActiveTheme={theme === "noir" ? "active" : ""}
             onClick={() => handleClick("noir")}
           >
             Noir
-          </STYLEDThemeOptionsButtons>
-          <STYLEDThemeOptionsButtons
+          </STYLEDButton>
+          <STYLEDButton height="25px" width="80%"
             isActiveTheme={theme === "blanc" ? "active" : ""}
             onClick={() => handleClick("blanc")}
           >
             Blanc
-          </STYLEDThemeOptionsButtons>
-          <STYLEDThemeOptionsButtons
+          </STYLEDButton>
+          <STYLEDButton height="25px" width="80%"
             isActiveTheme={theme === "marron" ? "active" : ""}
             onClick={() => handleClick("marron")}
           >
             Marron
-          </STYLEDThemeOptionsButtons>
+          </STYLEDButton>
 
 
 
         </STYLEDThemeOptions>
-      </STYLEDThemeContainerBox>
-    </STYLEDThemeContainer>
+      </STYLEDContainerBox>
+    </STYLEDContainer>
   );
 }
 
 export default Themes;
 
-const STYLEDThemeContainer = styled.div`
-  display: flex;
-  justify-content: center;
-  margin: 20px;
-`;
-
-const STYLEDThemeContainerBox = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-  width: 500px;
-  border-radius: 10px;
-  box-shadow: rgba(0, 0, 0, 0.05) 0 6px 245px, rgba(0, 0, 0, 0.08) 0 0 0 5px;
-`;
 const STYLEDThemeOptions = styled.div`
   width: 100%;
   display: flex;
   flex-direction: column;
-`;
-
-const STYLEDThemeOptionsButtons = styled.button`
-  padding: 10px;
-  background-color: var(--secondary-color);
-  color: var(--main-color);
-  border-radius: 10px;
-  &:hover {
-    background-color: var(--main-color);
-    color: var(--background-color);
-  }
-  &:active {
-    background-color: var(--main-color);
-    color: var(--background-color);
-  }
-  background-color: ${(props) =>
-    props.isActiveTheme ? "var(--main-color)" : "var(--secondary-color)"};
-  color: ${(props) =>
-    props.isActiveTheme ? "var(--secondary-color)" : "var(--main-color)"};
+  justify-content:center;
+  align-items:center;
 `;
