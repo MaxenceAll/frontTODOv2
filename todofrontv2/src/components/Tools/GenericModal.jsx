@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import styled, { keyframes } from "styled-components";
+import { STYLEDContainer, STYLEDContainerBox } from "../../styles/genericContainer";
 
 const GenericModal = ({ children, isOpen, onClose , props}) => {
   const [isClosing, setIsClosing] = useState(false);
@@ -32,7 +33,14 @@ const GenericModal = ({ children, isOpen, onClose , props}) => {
       aria-label={props?.ariaLabelMessage}
     >
       <ModalContent isClosing={isClosing} ref={modalRef}>
-        {children}
+
+        <STYLEDContainer>
+          <STYLEDContainerBox>
+            
+              {children}
+
+          </STYLEDContainerBox>
+        </STYLEDContainer>
       </ModalContent>
     </ModalWrapper>
   );

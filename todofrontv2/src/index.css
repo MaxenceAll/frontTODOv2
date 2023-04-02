@@ -10,6 +10,9 @@
   text-decoration: inherit;
   color: inherit
 }
+*{
+  list-style-type: none;
+}
 
 body {
   margin: 0;

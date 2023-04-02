@@ -1,16 +1,21 @@
-import React from "react";
 import { useForm } from "react-hook-form";
-import styled from "styled-components";
 import { HiCheck, HiBan } from "react-icons/hi";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useSearchParams } from "react-router-dom";
-
 import ButtonReturnToLogin from "../../components/Tools/ButtonReturnToLogin";
 import fetcher from "../../Helpers/fetcher";
+import {
+  STYLEDContainer,
+  STYLEDContainerBox,
+} from "../../styles/genericContainer";
+import { STYLEDForm } from "../../styles/genericForm";
+import { STYLEDButton } from "../../styles/genericButton";
+import { STYLEDhr } from "../../styles/genericHR";
+import { STYLEDErrorMessage } from "../../styles/genericParagraphError";
+import { STYLEDInput } from "../../styles/genericInput";
 
 function ResetPassword() {
-
   let [searchParams] = useSearchParams();
 
   const {
@@ -29,22 +34,24 @@ function ResetPassword() {
     }
     const token = searchParams.get("t");
     data.token = token;
-    console.log(token)
-    console.log(data.token)
+    console.log(token);
+    console.log(data.token);
     const resp = await fetcher.post("reset", data);
     console.log(resp);
     if (resp.result) {
-      console.log("sucess!");
-      toast.success(<ButtonReturnToLogin msg={"Modification de votre mot de passe avec succes !"}/>);
+      toast.success(
+        <ButtonReturnToLogin
+          msg={"Modification de votre mot de passe avec succes !"}
+        />
+      );
       // navigate("/login"); //TODO TROUVER UNE SOLUTION POUR AFFICHER LE MSG AVANT DE NAVIGATE Ou apres
     } else {
-      console.log("not a sucess :(");
       toast.error(`Oops erreur, retour de l'api : ${resp.message}`);
     }
   };
 
   return (
-    <STYLEDResetContainer>
+    <STYLEDContainer>
       <ToastContainer
         position="top-center"
         autoClose={5000}
@@ -62,8 +69,8 @@ function ResetPassword() {
         }}
       />
 
-      <STYLEDResetContainerBox>
-        <STYLEDResetContainerBoxForm onSubmit={handleSubmit(onSubmit)}>
+      <STYLEDContainerBox>
+        <STYLEDForm onSubmit={handleSubmit(onSubmit)}>
           <label htmlFor="pincode1">Saisir votre nouveau mot de passe :</label>
           <STYLEDInput
             placeholder="Saisir votre mot de passe"
@@ -82,11 +89,11 @@ function ResetPassword() {
             })}
           />
           {errors.pincode1 ? <HiBan /> : <HiCheck />}
-          {/* {errors.pincode1?.type === "matchPattern" && (
-              <p className="errorMsg">
-                Password should contain at least one uppercase letter,
-                lowercase letter, digit, and special symbol.
-              </p>
+                {/* {errors.pincode?.type === "matchPattern" && (
+              <STYLEDErrorMessage>
+                Doit contenir au moins une Majuscule,
+                une minuscule, une chiffre et un caractère spécial..
+              </STYLEDErrorMessage>
             )} */}
           {errors.pincode1?.type === "required" && (
             <STYLEDErrorMessage>
@@ -119,11 +126,14 @@ function ResetPassword() {
             })}
           />
           {errors.pincode2 ? <HiBan /> : <HiCheck />}
-          {/* {errors.pincode?.type === "matchPattern" && (
-              <p className="errorMsg">
-                Password should contain at least one uppercase letter,
-                lowercase letter, digit, and special symbol.
-              </p>
+
+          <STYLEDhr />
+
+                {/* {errors.pincode?.type === "matchPattern" && (
+              <STYLEDErrorMessage>
+                Doit contenir au moins une Majuscule,
+                une minuscule, une chiffre et un caractère spécial..
+              </STYLEDErrorMessage>
             )} */}
           {errors.pincode2?.type === "required" && (
             <STYLEDErrorMessage>
@@ -136,54 +146,13 @@ function ResetPassword() {
             </STYLEDErrorMessage>
           )}
 
-          <STYLEDSubmit type="submit">Valider</STYLEDSubmit>
-        </STYLEDResetContainerBoxForm>
-      </STYLEDResetContainerBox>
-    </STYLEDResetContainer>
+          <STYLEDButton type="submit" width="40%">
+            Valider
+          </STYLEDButton>
+        </STYLEDForm>
+      </STYLEDContainerBox>
+    </STYLEDContainer>
   );
 }
 
 export default ResetPassword;
-
-const STYLEDResetContainer = styled.div`
-  display: flex;
-  justify-content: center;
-  flex-direction: column;
-  align-items: center;
-  margin: 20px;
-`;
-const STYLEDResetContainerBox = styled.div`
-  width: 100%;
-  max-width: 500px;
-  border-radius: 15px;
-  overflow: hidden;
-  box-shadow: rgba(0, 0, 0, 0.05) 0 6px 245px, rgba(0, 0, 0, 0.08) 0 0 0 5px;
-`;
-
-const STYLEDResetContainerBoxForm = styled.form`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  min-height: 250px;
-  padding: 25px;
-  display: flex;
-`;
-
-const STYLEDInput = styled.input`
-  color: var(--main-color);
-  background-color: var(--background-color);
-`;
-const STYLEDSubmit = styled.button`
-  color: var(--main-color);
-  background-color: var(--background-color);
-  &:hover {
-    color: var(--secondary-color);
-    background-color: var(--main-color);
-  }
-`;
-
-const STYLEDErrorMessage = styled.p`
-  color: red;
-  background-color: lightcoral;
-`;

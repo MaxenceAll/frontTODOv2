@@ -6,9 +6,11 @@ export const STYLEDContainer = styled.div`
   flex-direction: column;
   align-items: center;
   margin: 20px;
-  min-height: 250px;
-  
+  min-height: 250px;  
 `;
+
+
+
 export const STYLEDContainerBox = styled.div`
 
   width: 100%;

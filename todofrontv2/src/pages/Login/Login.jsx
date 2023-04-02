@@ -11,10 +11,6 @@ import { AuthContext } from "../../Contexts/AuthContext";
 import useCookie from "../../Hooks/useCookie";
 import ButtonReturnToHome from "../../components/Tools/ButtonReturnToHome";
 import { STYLEDForm } from "../../styles/genericForm";
-import {
-  STYLEDContainer,
-  STYLEDContainerBox,
-} from "../../styles/genericContainer";
 import { STYLEDButton } from "../../styles/genericButton";
 import { STYLEDhr } from "../../styles/genericHR";
 import { STYLEDErrorMessage } from "../../styles/genericParagraphError";
@@ -28,7 +24,9 @@ function Login() {
   const [display, setDisplay] = useState("login");
 
   const [email, setEmail] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isModalOpenForgottenPassword, setIsModalOpenForgottenPassword] =
+    useState(false);
+  const [isModalOpenDisconnect, setIsModalOpenDisconnect] = useState(false);
 
   const passwordForgottenEmailInputRef = useRef(null);
   const emailInputRef = useRef(null);
@@ -41,14 +39,19 @@ function Login() {
     if (emailInputRef.current) {
       emailInputRef.current.focus();
     }
-    if (isModalOpen && passwordForgottenEmailInputRef.current) {
+    if (
+      isModalOpenForgottenPassword &&
+      passwordForgottenEmailInputRef.current
+    ) {
       passwordForgottenEmailInputRef.current.focus();
     }
-  }, [isModalOpen]);
+  }, [isModalOpenForgottenPassword]);
 
   const openForgottenPasswordModal = (e) => {
-    // e.preventDefault();
-    setIsModalOpen(true);
+    setIsModalOpenForgottenPassword(true);
+  };
+  const openDisconnectModal = (e) => {
+    setIsModalOpenDisconnect(true);
   };
 
   async function handleRenewPassword(e) {
@@ -57,7 +60,7 @@ function Login() {
     console.log(emailObject);
     const resp = await fetcher.post("renew", emailObject);
     console.log(resp);
-    setIsModalOpen(false);
+    setIsModalOpenForgottenPassword(false);
     if (resp.result) {
       toast.success(
         `Envoi d'un e-mail à votre adresse : ${resp.data.accepted} ; vérifiez votre boite mail !`
@@ -69,9 +72,9 @@ function Login() {
   }
 
   function handleDisconnect(e) {
-    // e.preventDefault();
     setAuth(null);
     setAuthCookie(null);
+    setIsModalOpenDisconnect(false);
     toast.info(`Deconnexion avec succes.`);
   }
 
@@ -138,57 +141,78 @@ function Login() {
           color: "var(--main-color)",
         }}
       />
-
       <STYLEDLoginContainerBox>
+
+
         {/* MODAL EST laiisé PAR ICI POUR GARDER LA LOGIC ICI */}
         {/* TODO : déporter ce modal... */}
         <GenericModal
           ariaLabelMessage="Modal de récupération de mot de passe"
-          isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
+          isOpen={isModalOpenForgottenPassword}
+          onClose={() => setIsModalOpenForgottenPassword(false)}
         >
-          <STYLEDContainer>
-            <STYLEDContainerBox>
-              <STYLEDForm onSubmit={handleRenewPassword}>
-                <i>Envoyer les instructions sur l'adresse mail suivante ?</i>
+          <STYLEDForm onSubmit={handleRenewPassword}>
+            <label htmlFor="email">
+              Envoyer les instructions sur l'adresse mail suivante ?
+            </label>
+            <STYLEDhr />
+            <STYLEDInput
+              width="80%"
+              id="email"
+              name="email"
+              type="email"
+              className="form-control"
+              placeholder="Votre adresse email"
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              ref={passwordForgottenEmailInputRef}
+            />
+            <STYLEDhr />
+            <STYLEDButton width="40%" type="submit">
+              Oui
+            </STYLEDButton>
+            <STYLEDButton
+              width="40%"
+              type="button"
+              onClick={() => setIsModalOpenForgottenPassword(false)}
+            >
+              Non
+            </STYLEDButton>
+          </STYLEDForm>
+        </GenericModal>
 
-                <STYLEDhr />
-
-                <STYLEDInput
-                  id="email"
-                  name="email"
-                  type="email"
-                  className="form-control"
-                  placeholder="Votre adresse email"
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                  ref={passwordForgottenEmailInputRef}
-                />
-
-                <STYLEDhr />
-
-                <STYLEDButton width="100%" type="submit">
-                  Oui
-                </STYLEDButton>
-                <STYLEDButton
-                  width="100%"
-                  type="button"
-                  onClick={() => setIsModalOpen(false)}
-                >
-                  Non
-                </STYLEDButton>
-              </STYLEDForm>
-            </STYLEDContainerBox>
-          </STYLEDContainer>
+        <GenericModal
+          ariaLabelMessage="Modal de confirmation déconnexion"
+          isOpen={isModalOpenDisconnect}
+          onClose={() => setIsModalOpenDisconnect(false)}
+        >
+          <label>Voulez-vous vraiment vous déconnecter ?</label>
+          <STYLEDButton
+            onClick={(e) => handleDisconnect(e)}
+            width="40%"
+            type="button"
+          >
+            Oui
+          </STYLEDButton>
+          <STYLEDButton
+            width="40%"
+            type="button"
+            onClick={() => setIsModalOpenDisconnect(false)}
+          >
+            Non
+          </STYLEDButton>
         </GenericModal>
 
         {auth?.data?.email ? (
           <>
             <STYLEDLoginContainerBoxForm>
               <p>Bonjour, {auth?.data?.email}</p>
-              <STYLEDButton 
-              width="50%"
-              type="button" onClick={(e) => handleDisconnect(e)}>
+              <STYLEDButton
+                width="50%"
+                type="button"
+                // onClick={(e) => handleDisconnect(e)}
+                onClick={openDisconnectModal}
+              >
                 Se déconnecter
               </STYLEDButton>
             </STYLEDLoginContainerBoxForm>

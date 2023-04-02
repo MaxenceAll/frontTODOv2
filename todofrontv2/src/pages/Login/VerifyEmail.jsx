@@ -1,10 +1,10 @@
-import React from "react";
-
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import ButtonReturnToLogin from "../../components/Tools/ButtonReturnToLogin";
 import { useLocation } from "react-router-dom";
 import fetcher from "../../Helpers/fetcher";
+import { STYLEDContainer, STYLEDContainerBox } from "../../styles/genericContainer";
+import { STYLEDButton } from "../../styles/genericButton";
 
 function VerifyEmail() {
 
@@ -30,7 +30,9 @@ function VerifyEmail() {
   };
 
   return (
-    <>
+    <STYLEDContainer>
+      <STYLEDContainerBox>
+
       <ToastContainer
         position="top-center"
         autoClose={5000}
@@ -47,9 +49,12 @@ function VerifyEmail() {
           color: "var(--main-color)",
         }}
       />
+
+
       <div>Yo there, token is : {token} </div>
-      <button onClick={handleClick}>Valider en cliquant ici</button>
-    </>
+      <STYLEDButton onClick={handleClick}>Valider en cliquant ici</STYLEDButton>
+      </STYLEDContainerBox>
+    </STYLEDContainer>
   );
 }
 
