@@ -9,7 +9,6 @@ export const STYLEDButton = styled.button`
 
   cursor: pointer;
 
-  
   transition: all 0.3s ease;
 
   &:hover {
@@ -24,7 +23,6 @@ export const STYLEDButton = styled.button`
     background-color: var(--main-color);
     color: var(--background-color);
   }
-
 
   // SPECIAL Theme page :
   background-color: ${(props) =>

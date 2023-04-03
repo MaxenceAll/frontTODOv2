@@ -15,12 +15,13 @@ export const Home = () => {
   const { auth, setAuth } = useContext(AuthContext);
   console.log(auth);
 
+  const [sortOrderById, setSortOrderById] = useState("asc"); // "asc" or "desc"
+  const [sortOrderByProgress, setSortOrderByProgress] = useState(""); // "asc" or "desc"
+  const [showFavorites, setShowFavorites] = useState(false); // true or false
+  const [showCompleted, setShowCompleted] = useState(false); // true or false
 
-  const [order, setOrder] = useState("default");
 
-  const changeOrder = (newOrder) => {
-    setOrder(newOrder);
-  };
+
 
   // const {
   //   data: allTodos,
@@ -39,16 +40,70 @@ export const Home = () => {
 
   let content;
   if (isSuccess) {
+    let sortedTodos = [...allTodosByEmail?.data];
+
+    // Filter by id:
+    if (sortOrderById) {
+      sortedTodos.sort((a, b) => {
+        if (sortOrderById === "asc") {
+          return a.id - b.id;
+        } else {
+          return b.id - a.id;
+        }
+      });
+    }
+    // Filter by is_favorite:
+    if (showFavorites) {
+      sortedTodos = sortedTodos.filter((todo) => todo.is_favorite);
+    }
+    // Filter by progress:
+    if (sortOrderByProgress) {
+      sortedTodos.sort((a, b) => {
+        if (sortOrderByProgress === "asc") {
+          return a.is_completed - b.is_completed;
+        } else {
+          return b.is_completed - a.is_completed;
+        }
+      });
+    }
+    // Filter by completed:
+    if (showCompleted) {
+      sortedTodos = sortedTodos.filter((todo) => todo.is_completed !== 100);
+    }
+    // le pourcentage de completed :
+    let completedTodos = sortedTodos.filter(todo => todo.is_completed === 100);
+
+
     content = (
-      <ul>
-        {allTodosByEmail?.data?.map((todo) => (
-          <li key={todo.id}>
-            <TodoCard todo={todo} />
-          </li>
-        )) ?? null}
-      </ul>
+      <>
+        <FilterBox
+          sortOrderById={sortOrderById}
+          setSortOrderById={setSortOrderById}
+
+          showFavorites={showFavorites}
+          setShowFavorites={setShowFavorites}
+
+          sortOrderByProgress={sortOrderByProgress}
+          setSortOrderByProgress={setSortOrderByProgress}
+
+          showCompleted={showCompleted}
+          setShowCompleted={setShowCompleted}
+
+          numTodos={sortedTodos.length}
+          completedTodos={completedTodos}
+
+        />
+        <ul>
+          {sortedTodos?.map((todo) => (
+            <li key={todo.id}>
+              <TodoCard todo={todo} />
+            </li>
+          ))}
+        </ul>
+      </>
     );
   }
+
   if (isError) {
     content = (
       <div>
@@ -64,12 +119,6 @@ export const Home = () => {
   return (
     <>
       Coucou {auth?.data?.email}
-      <STYLEDFilterContainer>
-        <STYLEDFilterContainerBox>
-          <FilterBox />
-        </STYLEDFilterContainerBox>
-      </STYLEDFilterContainer>
-
       <STYLEDContainer>
         <STYLEDContainerBox>{content}</STYLEDContainerBox>
       </STYLEDContainer>

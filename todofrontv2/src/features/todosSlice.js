@@ -13,6 +13,7 @@ export const todosApi = createApi({
       return headers;
     },
     credentials: "include",
+    tagTypes: ["Todos"],
   }),
   endpoints: (builder) => ({
     getAllTodos: builder.query({
@@ -27,15 +28,13 @@ export const todosApi = createApi({
           message: response.message,
         };
       },
-    }),
-    
-    getAllTodosByEmail: builder.query({
-      query: () => "todo/table",
+      providesTags: ["Todos"],
     }),
 
     getAllTodosByEmail: builder.query({
       query: (email) => `todo/table/${email}`,
       transformResponse: (response) => {
+        // console.log(response);
         // SORTING les todos par id (obligé de décomposer l'objet et le recomposer pour garder la structure originelle)
         const sortedData = response.data.sort((a, b) => b.id - a.id);
         return {
@@ -44,7 +43,13 @@ export const todosApi = createApi({
           message: response.message,
         };
       },
+      providesTags: ["Todos"],
     }),
+
+
+
+
+
   }),
 });
 
