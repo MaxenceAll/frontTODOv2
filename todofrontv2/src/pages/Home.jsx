@@ -1,14 +1,14 @@
 import { useContext, useState } from "react";
 import TodoCard from "../components/Todos/TodoCard";
 import { AuthContext } from "../Contexts/AuthContext";
-import { useGetAllTodos, useGetAllTodosByEmail } from "../features/todosSlice";
-
 import styled from "styled-components";
 import {
   STYLEDContainer,
   STYLEDContainerBox,
 } from "../styles/genericContainer";
 import FilterBox from "../components/Todos/FilterBox";
+
+import  {useGetAllTodosByEmailQuery}  from "../features/todosSlice";
 
 // TESTS AVEC RTK QUERIES (de redux)
 export const Home = () => {
@@ -20,23 +20,13 @@ export const Home = () => {
   const [showFavorites, setShowFavorites] = useState(false); // true or false
   const [showCompleted, setShowCompleted] = useState(false); // true or false
 
-
-
-
-  // const {
-  //   data: allTodos,
-  //   error,
-  //   isError,
-  //   isLoading,
-  //   isSuccess,
-  // } = useGetAllTodos();
   const {
     data: allTodosByEmail,
     error,
     isError,
     isLoading,
     isSuccess,
-  } = useGetAllTodosByEmail(auth?.data?.email);
+  } = useGetAllTodosByEmailQuery(auth?.data?.email);
 
   let content;
   if (isSuccess) {

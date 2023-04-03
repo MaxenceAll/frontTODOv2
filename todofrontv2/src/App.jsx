@@ -36,7 +36,7 @@ const router = createBrowserRouter(
       <Route path="verify-email" element={<VerifyEmail />} />
       <Route path="success" element={<VerifyEmailSuccess />} />
       <Route path="themes" element={<Themes />} />
-      <Route path="dashboard" element={<Dashboard />} />
+      {/* <Route path="dashboard" element={<Dashboard />} /> */}
       <Route path="*" element={<NotFound />} />
     </Route>
   )

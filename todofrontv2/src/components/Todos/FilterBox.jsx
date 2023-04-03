@@ -17,7 +17,6 @@ import {
 } from "react-icons/bs";
 import { STYLEDButton } from "../../styles/genericButton";
 
-
 function FilterBox({
   sortOrderById,
   setSortOrderById,
@@ -86,7 +85,6 @@ function FilterBox({
     toast.info("Remise à zéro des filtres.");
   };
 
-
   return (
     <STYLEDTodoContainer>
       {/*  TODO Trouver un moyen de déplacer cette logique ailleurs (main.jsx ?) */}
@@ -109,53 +107,56 @@ function FilterBox({
 
       <STYLEDTodoContainerBox>
         <div>
-          <u>Filtres :</u>
-
           <div>
-            <STYLEDTodoButton
-              isActiveFilter={!ascendingById ? "active" : ""}
-              onClick={handleSortOrderByIdToggle}
-            >
-              {ascendingById ? <BsSortUpAlt /> : <BsSortDown />}
-            </STYLEDTodoButton>
-          </div>
+            <u>Trier :</u>
+            <div>
+              <STYLEDTodoButton
+                isActiveFilter={!ascendingById ? "active" : ""}
+                onClick={handleSortOrderByIdToggle}
+              >
+                {ascendingById ? <BsSortUpAlt /> : <BsSortDown />}
+              </STYLEDTodoButton>
+            </div>
 
+            <div>
+              <STYLEDTodoButton
+                isActiveFilter={!ascendingByProgress ? "active" : ""}
+                onClick={handleSortOrderByProgressToggle}
+              >
+                {ascendingByProgress ? (
+                  <BsSortNumericDownAlt />
+                ) : (
+                  <BsSortNumericUp />
+                )}
+              </STYLEDTodoButton>
+            </div>
+            <STYLEDButton onClick={resetAllFilters}>Reset</STYLEDButton>
+          </div>
           <div>
-            <STYLEDTodoButton
-              isActiveFilter={!ascendingByProgress ? "active" : ""}
-              onClick={handleSortOrderByProgressToggle}
-            >
-              {ascendingByProgress ? (
-                <BsSortNumericDownAlt />
-              ) : (
-                <BsSortNumericUp />
-              )}
-            </STYLEDTodoButton>
-          </div>
+            <u>Filtrer :</u>
+            <div>
+              <STYLEDTodoButton
+                isActiveFilter={showFavorites ? "active" : ""}
+                onClick={handleShowFavoritesToggle}
+              >
+                {showFavorites ? <BsSuitHeartFill /> : <BsSuitHeart />}
+              </STYLEDTodoButton>
+            </div>
 
-          <div>
-            <STYLEDTodoButton
-              isActiveFilter={showFavorites ? "active" : ""}
-              onClick={handleShowFavoritesToggle}
-            >
-              {showFavorites ? <BsSuitHeartFill /> : <BsSuitHeart />}
-            </STYLEDTodoButton>
+            <div>
+              <STYLEDTodoButton
+                isActiveFilter={showCompleted ? "active" : ""}
+                onClick={handleShowCompletedToggle}
+              >
+                {showCompleted ? <BsFileEarmarkBreak /> : <BsFileCheck />}
+              </STYLEDTodoButton>
+            </div>
           </div>
-
-          <div>
-            <STYLEDTodoButton
-              isActiveFilter={showCompleted ? "active" : ""}
-              onClick={handleShowCompletedToggle}
-            >
-              {showCompleted ? <BsFileEarmarkBreak /> : <BsFileCheck />}
-            </STYLEDTodoButton>
-          </div>
-
           <STYLEDButton onClick={resetAllFilters}>Reset</STYLEDButton>
         </div>
 
         <div>
-            <u>Informations :</u>
+          <u>Informations :</u>
           <p>
             {/* Illisible mais tellement beau ! ☺*/}
             {numTodos === 0
@@ -165,12 +166,17 @@ function FilterBox({
               : `${numTodos} Todos trouvées.`}
           </p>
           <p>
-          {completedTodos.length === 0
+            {completedTodos.length === 0
               ? "Aucune todo !"
               : completedTodos.length === 1
-              ? `${completedTodos.length}/${numTodos} completée. (${((completedTodos.length/numTodos)*100).toFixed(0)}%)`
-              : `${completedTodos.length}/${numTodos} completées. (${((completedTodos.length/numTodos)*100).toFixed(0)}%)`}
-                
+              ? `${completedTodos.length}/${numTodos} completée. (${(
+                  (completedTodos.length / numTodos) *
+                  100
+                ).toFixed(0)}%)`
+              : `${completedTodos.length}/${numTodos} completées. (${(
+                  (completedTodos.length / numTodos) *
+                  100
+                ).toFixed(0)}%)`}
           </p>
         </div>
       </STYLEDTodoContainerBox>

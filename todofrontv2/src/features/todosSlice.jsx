@@ -13,7 +13,7 @@ export const todosApi = createApi({
       return headers;
     },
     credentials: "include",
-    tagTypes: ["Todos"],
+    tagTypes: ["Todos", "Tasks"],
   }),
   endpoints: (builder) => ({
     getAllTodos: builder.query({
@@ -46,6 +46,52 @@ export const todosApi = createApi({
       providesTags: ["Todos"],
     }),
 
+    updateFavorite: builder.mutation({
+      query: ({ id, is_favorite }) => ({
+        url: `todo/${id}`,
+        method: "PUT",
+        body: { is_favorite },
+      }),
+      // Vérifier l'utilitée d'invalider pour un favoris
+      // invalidatesTags: ["Todos"],
+    }),
+
+    softDelete: builder.mutation({
+      query: (id) => ({
+        url: `todo/${id}`,
+        method: "PATCH",
+      }),
+      invalidatesTags: ["Todos"],
+    }),
+
+
+    getAllTasksByEmail: builder.query({
+      query: (email) => `task/table/${email}`,
+      transformResponse: (response) => {
+        return {
+          data: response.data,
+          result: response.result,
+          message: response.message,
+        };
+      },
+      providesTags: ["Tasks"],
+    }),
+    
+    getAllTasksByTodoId: builder.query({
+      query: (id) => `task/task/${id}`,
+      transformResponse: (response) => {
+        // console.log(response);
+        // SORTING les todos par id (obligé de décomposer l'objet et le recomposer pour garder la structure originelle)
+        const sortedData = response.data.sort((a, b) => b.id - a.id);
+        return {
+          data: sortedData,
+          result: response.result,
+          message: response.message,
+        };
+      },
+      providesTags: ["Tasks"],
+    }),
+
 
 
 
@@ -53,6 +99,11 @@ export const todosApi = createApi({
   }),
 });
 
-export const useGetAllTodos = todosApi.endpoints.getAllTodos.useQuery;
-export const useGetAllTodosByEmail =
-  todosApi.endpoints.getAllTodosByEmail.useQuery;
+export const {
+  useGetAllTodosQuery,
+  useGetAllTodosByEmailQuery,
+  useUpdateFavoriteMutation,
+  useSoftDeleteMutation,
+  useGetAllTasksByEmailQuery,
+  useGetAllTasksByTodoIdQuery,
+} = todosApi;
