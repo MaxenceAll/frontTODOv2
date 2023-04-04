@@ -8,12 +8,13 @@ import {
 } from "../styles/genericContainer";
 import FilterBox from "../components/Todos/FilterBox";
 
-import  {useGetAllTodosByEmailQuery}  from "../features/todosSlice";
+import  {useGetAllTasksByEmailQuery, useGetAllTodosByEmailQuery}  from "../features/todosSlice";
+import { FaListUl } from "react-icons/fa";
 
 // TESTS AVEC RTK QUERIES (de redux)
 export const Home = () => {
   const { auth, setAuth } = useContext(AuthContext);
-  console.log(auth);
+  // console.log(auth);
 
   const [sortOrderById, setSortOrderById] = useState("asc"); // "asc" or "desc"
   const [sortOrderByProgress, setSortOrderByProgress] = useState(""); // "asc" or "desc"
@@ -26,7 +27,7 @@ export const Home = () => {
     isError,
     isLoading,
     isSuccess,
-  } = useGetAllTodosByEmailQuery(auth?.data?.email);
+  } = useGetAllTodosByEmailQuery(auth?.data?.email); 
 
   let content;
   if (isSuccess) {
@@ -108,7 +109,9 @@ export const Home = () => {
   if (isLoading) return <h1> Loading...</h1>;
   return (
     <>
+      <p>
       Coucou {auth?.data?.email}
+      </p>
       <STYLEDContainer>
         <STYLEDContainerBox>{content}</STYLEDContainerBox>
       </STYLEDContainer>
@@ -116,7 +119,11 @@ export const Home = () => {
   );
 };
 
-const STYLEDTodoContainer = styled.article``;
+const STYLEDTodoContainer = styled.article`
+background-color: pink;
+`;
+
+
 
 const STYLEDFilterContainer = styled.div`
   display: flex;

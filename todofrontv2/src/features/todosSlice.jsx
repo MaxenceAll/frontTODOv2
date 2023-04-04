@@ -46,24 +46,6 @@ export const todosApi = createApi({
       providesTags: ["Todos"],
     }),
 
-    updateFavorite: builder.mutation({
-      query: ({ id, is_favorite }) => ({
-        url: `todo/${id}`,
-        method: "PUT",
-        body: { is_favorite },
-      }),
-      // Vérifier l'utilitée d'invalider pour un favoris
-      // invalidatesTags: ["Todos"],
-    }),
-
-    softDelete: builder.mutation({
-      query: (id) => ({
-        url: `todo/${id}`,
-        method: "PATCH",
-      }),
-      invalidatesTags: ["Todos"],
-    }),
-
 
     getAllTasksByEmail: builder.query({
       query: (email) => `task/table/${email}`,
@@ -94,6 +76,72 @@ export const todosApi = createApi({
 
 
 
+    createTodo: builder.mutation({
+      query: (title,description, id_customer) => ({
+        url: 'todo',
+        method: 'POST',
+        body: JSON.stringify( title, description, id_customer ),
+      }),
+      invalidatesTags: ['Todos'],
+    }),
+
+
+
+    updateFavorite: builder.mutation({
+      query: ({ id, is_favorite }) => ({
+        url: `todo/${id}`,
+        method: "PUT",
+        body: { is_favorite },
+      }),
+      // Vérifier l'utilitée d'invalider pour un favoris
+      // invalidatesTags: ["Todos"],
+    }),
+
+    updateTaskCompleted: builder.mutation ({
+      query: ({ id , is_completed }) => ({
+          url: `task/${id}`,
+          method: "PUT",
+          body: { is_completed },
+      }),
+      // Vérifier l'utilitée d'invalider pour un favoris
+      // invalidatesTags: ["Tasks"],
+    }),
+
+    updateTaskPriority: builder.mutation ({
+      query: ({ id , id_priority }) => ({
+          url: `task/${id}`,
+          method: "PUT",
+          body: { id_priority },
+      }),
+      // Vérifier l'utilitée d'invalider pour un favoris
+      invalidatesTags: ["Tasks"],
+    }),
+
+
+    softDeleteTask: builder.mutation({
+      query: (id) => ({
+        url: `task/${id}`,
+        method: "PATCH",
+      }),
+      invalidatesTags: ["Tasks"],
+    }),
+
+
+    softDelete: builder.mutation({
+      query: (id) => ({
+        url: `todo/${id}`,
+        method: "PATCH",
+      }),
+      invalidatesTags: ["Todos"],
+    }),
+
+
+
+
+
+
+
+
 
 
   }),
@@ -102,8 +150,12 @@ export const todosApi = createApi({
 export const {
   useGetAllTodosQuery,
   useGetAllTodosByEmailQuery,
+  useCreateTodoMutation,
   useUpdateFavoriteMutation,
   useSoftDeleteMutation,
   useGetAllTasksByEmailQuery,
   useGetAllTasksByTodoIdQuery,
+  useUpdateTaskCompletedMutation,
+  useUpdateTaskPriorityMutation,
+  useSoftDeleteTaskMutation,
 } = todosApi;

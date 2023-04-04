@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import styled from "styled-components";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -14,8 +14,13 @@ import {
   BsSortNumericDownAlt,
   BsSortNumericUpAlt,
   BsSortNumericUp,
+  BsUpload,
 } from "react-icons/bs";
 import { STYLEDButton } from "../../styles/genericButton";
+import { useCreateTodoMutation } from "../../features/todosSlice";
+import { STYLEDInput } from "../../styles/genericInput";
+import { AuthContext } from "../../Contexts/AuthContext";
+import { STYLEDForm } from "../../styles/genericForm";
 
 function FilterBox({
   sortOrderById,
@@ -32,13 +37,14 @@ function FilterBox({
   const [ascendingById, setAscendingById] = useState(true);
   const [ascendingByProgress, setAscendingByProgress] = useState(true);
 
+  // FILTERS :
   const handleSortOrderByIdToggle = () => {
     setAscendingById(!ascendingById);
     setSortOrderById(ascendingById ? "desc" : "asc");
     setSortOrderByProgress("");
     toast.success(
       `Filtrage : + ${
-        ascendingById ? "ancien au + récent." : "récent au + ancien."
+        ascendingById ? "récent en premier" : "vieux en premier."
       }`
     );
   };
@@ -85,8 +91,77 @@ function FilterBox({
     toast.info("Remise à zéro des filtres.");
   };
 
+  // NEW TODO
+  const { auth, setAuth } = useContext(AuthContext);
+  const [createAlbum, { isLoading }] = useCreateTodoMutation();
+  const [newTodoTitle, setNewTodoTitle] = useState("");
+  const [newTodoDesc, setNewTodoDesc] = useState("");
+
+  const handleSubmitNewTodo = (e) => {
+    e.preventDefault();
+    if (newTodoTitle && newTodoDesc) {
+      createAlbum({
+        id_customer: auth?.data?.id,
+        title: newTodoTitle,
+        description: newTodoDesc,
+      });
+      setNewTodoTitle("");
+      setNewTodoDesc("");
+      toast.success(`Ajout de la todo ${newTodoTitle} avec succes !`);
+    } else {
+      toast.error(`Oops merci de remplir le petit formulaire en entier !`);
+    }
+  };
+
+  const newTodoSection = (
+    <STYLEDFormNewTodo onSubmit={handleSubmitNewTodo}>
+      <STYLEDLabelFormNewTodo htmlFor="new-todo-title">
+        Son nom ?
+      </STYLEDLabelFormNewTodo>
+      <div>
+        <STYLEDInput
+          type="text"
+          id="new-todo-title"
+          value={newTodoTitle}
+          onChange={(e) => setNewTodoTitle(e.target.value)}
+          placeholder="Le nom de la TODO ?"
+          disabled={isLoading}
+        />
+      </div>
+      <STYLEDLabelFormNewTodo htmlFor="new-todo-desc">
+        Sa description ?
+      </STYLEDLabelFormNewTodo>
+      <div>
+        <STYLEDInput
+          type="text"
+          id="new-todo-desc"
+          value={newTodoDesc}
+          onChange={(e) => setNewTodoDesc(e.target.value)}
+          placeholder="La description de la TODO ?"
+          disabled={isLoading}
+        />
+        {isLoading && " Loading..."}
+      </div>
+      <STYLEDButton width="80%">
+        <BsUpload />
+      </STYLEDButton>
+    </STYLEDFormNewTodo>
+  );
+
+  // Gestion ouverture filterbox
+  const [filterBox, setFilterBox] = useState(true);
+  const toggleFilterBox = ()=>{
+    setFilterBox(prevFilterBox => !prevFilterBox);
+    if (filterBox){
+      toast.info("Ouverture de la filter box !")
+    }
+    else{
+      toast.info("Fermeture de la filter box !")
+    }
+  }
+
   return (
-    <STYLEDTodoContainer>
+    <STYLEDFilterboxContainer>
       {/*  TODO Trouver un moyen de déplacer cette logique ailleurs (main.jsx ?) */}
       <ToastContainer
         position="bottom-center"
@@ -104,22 +179,21 @@ function FilterBox({
           color: "var(--main-color)",
         }}
       />
-
-      <STYLEDTodoContainerBox>
-        <div>
+      <STYLEDFilterBoxContainerBox>
+     {filterBox ?   (<>
+     <div>
           <div>
-            <u>Trier :</u>
+            <u>Trier:</u>
             <div>
-              <STYLEDTodoButton
+              <STYLEDFilterBoxButton
                 isActiveFilter={!ascendingById ? "active" : ""}
                 onClick={handleSortOrderByIdToggle}
               >
                 {ascendingById ? <BsSortUpAlt /> : <BsSortDown />}
-              </STYLEDTodoButton>
+              </STYLEDFilterBoxButton>
             </div>
-
             <div>
-              <STYLEDTodoButton
+              <STYLEDFilterBoxButton
                 isActiveFilter={!ascendingByProgress ? "active" : ""}
                 onClick={handleSortOrderByProgressToggle}
               >
@@ -128,31 +202,31 @@ function FilterBox({
                 ) : (
                   <BsSortNumericUp />
                 )}
-              </STYLEDTodoButton>
+              </STYLEDFilterBoxButton>
             </div>
             <STYLEDButton onClick={resetAllFilters}>Reset</STYLEDButton>
           </div>
+
           <div>
-            <u>Filtrer :</u>
+            <u>Filtrer:</u>
             <div>
-              <STYLEDTodoButton
+              <STYLEDFilterBoxButton
                 isActiveFilter={showFavorites ? "active" : ""}
                 onClick={handleShowFavoritesToggle}
               >
                 {showFavorites ? <BsSuitHeartFill /> : <BsSuitHeart />}
-              </STYLEDTodoButton>
+              </STYLEDFilterBoxButton>
             </div>
-
             <div>
-              <STYLEDTodoButton
+              <STYLEDFilterBoxButton
                 isActiveFilter={showCompleted ? "active" : ""}
                 onClick={handleShowCompletedToggle}
               >
                 {showCompleted ? <BsFileEarmarkBreak /> : <BsFileCheck />}
-              </STYLEDTodoButton>
+              </STYLEDFilterBoxButton>
             </div>
+            <STYLEDButton onClick={resetAllFilters}>Reset</STYLEDButton>
           </div>
-          <STYLEDButton onClick={resetAllFilters}>Reset</STYLEDButton>
         </div>
 
         <div>
@@ -178,32 +252,122 @@ function FilterBox({
                   100
                 ).toFixed(0)}%)`}
           </p>
+
+          <div>
+            <p>
+              <u>Création d'une TODO:</u>
+            </p>
+            {newTodoSection}
+          </div>
         </div>
-      </STYLEDTodoContainerBox>
-    </STYLEDTodoContainer>
+        </>)
+        :
+        <>Ouvrir la boite à filtre.</>
+        }
+
+        {!filterBox &&<STYLEDOpenFilterBoxButton
+        onClick={toggleFilterBox}
+        >🡃</STYLEDOpenFilterBoxButton>}
+        {filterBox &&<STYLEDCloseFilterBoxButton
+        onClick={toggleFilterBox}
+        >🠽</STYLEDCloseFilterBoxButton>}
+
+      </STYLEDFilterBoxContainerBox>
+    </STYLEDFilterboxContainer>
   );
 }
 
 export default FilterBox;
 
-const STYLEDTodoContainer = styled.div`
+const STYLEDOpenFilterBoxButton = styled.button`
+  width: 100%;
+  height: 15px;
+
+  font-size: 1rem;
+  position: absolute;
+  top: -1%;
+
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+  color: var(--main-color);
+  background-color: var(--background-color);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  &:hover {
+    color: var(--secondary-color);
+    background-color: var(--main-color);
+    transform: translateY(-3px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+  }
+`;
+
+const STYLEDCloseFilterBoxButton = styled.button`
+  width: 100%;
+  height: 15px;
+
+  font-size: 1rem;
+  position: absolute;
+  bottom: -7%;
+
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  color: var(--main-color);
+  background-color: var(--background-color);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  &:hover {
+    color: var(--secondary-color);
+    background-color: var(--main-color);
+    transform: translateY(-3px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+  }
+`;
+
+
+
+
+
+
+const STYLEDFormNewTodo = styled.form`
+  transition: all 0.3s ease;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+`;
+const STYLEDLabelFormNewTodo = styled.label`
+  font-size: 0.8rem;
+  font-style: italic;
+`;
+const STYLEDFilterboxContainer = styled.div`
   display: flex;
   justify-content: center;
   flex-direction: row;
   align-items: center;
+  border: 2px groove var(--main-color);
+  margin-bottom: 5%;
+  
 `;
 
-const STYLEDTodoContainerBox = styled.div`
+const STYLEDFilterBoxContainerBox = styled.div`
+  transition: all 0.3s ease;
+  position: relative;
   display: flex;
+  justify-content: center;
   flex-direction: row;
+  align-items: center;
+
   width: 100%;
   max-width: 500px;
   border-radius: 15px;
-  box-shadow: rgba(0, 0, 0, 0.05) 0 6px 245px, rgba(0, 0, 0, 0.08) 0 0 0 5px;
+  /* box-shadow: rgba(0, 0, 0, 0.05) 0 6px 245px, rgba(0, 0, 0, 0.08) 0 0 0 5px; */
   padding: 3%;
+
+  padding-top: 5%;
+  margin-bottom: 3%;
 `;
 
-const STYLEDTodoButton = styled.button`
+const STYLEDFilterBoxButton = styled.button`
   font-size: 1.5rem;
 
   width: ${(props) => props.width || ""};
@@ -224,7 +388,7 @@ const STYLEDTodoButton = styled.button`
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
   }
 
-  // SPECIAL page :
+  // SPECIAL page filterbox:
   background-color: ${(props) =>
     props.isActiveFilter ? "var(--main-color)" : "var(--secondary-color)"};
   color: ${(props) =>

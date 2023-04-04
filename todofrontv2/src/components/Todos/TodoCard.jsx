@@ -14,23 +14,34 @@ import {
 import styled from "styled-components";
 import {
   useGetAllTasksByEmailQuery,
+  useGetAllTasksByTodoIdQuery,
   useSoftDeleteMutation,
   useUpdateFavoriteMutation,
 } from "../../features/todosSlice";
 
 import { STYLEDButton } from "../../styles/genericButton";
 import { AuthContext } from "../../Contexts/AuthContext";
+import TaskCard from "./TaskCard";
 
 function TodoCard({ todo }) {
+  const [currentPage, setCurrentPage] = useState(1);
+  const [taskPerPage] = useState(2);
+  function paginate(tasks) {
+    const indexOfLastTask = currentPage * todosPerPage;
+    const indexOfFirstTask = indexOfLastTask - todosPerPage;
+    const currentTasks = tasks.slice(indexOfFirstTask, indexOfLastTask);
+    return currentTasks;
+  }
+
   const [favorite, setFavorite] = useState(todo.is_favorite);
-  const [updateFavorite, { isLoading }] = useUpdateFavoriteMutation();  
+  const [updateFavorite, { isLoading }] = useUpdateFavoriteMutation();
   const toggleFavorite = () => {
     setFavorite(!favorite);
     updateFavorite({ id: todo.id, is_favorite: favorite ? 0 : 1 });
     {
       favorite
-      ? toast.success(`${todo.title} ajouté aux favoris avec succes.`)
-      : toast.info(`${todo.title} retiré des favoris !`);
+        ? toast.success(`${todo.title} ajouté aux favoris avec succes.`)
+        : toast.info(`${todo.title} retiré des favoris !`);
     }
   };
 
@@ -47,17 +58,23 @@ function TodoCard({ todo }) {
     isError,
     isSuccess,
   } = useGetAllTasksByEmailQuery(auth?.data?.email);
-  let sortedTasks = [];
-  let taskContent=""
+  let AllTaskByEmail = [];
+  let AllTaskContentByEmail = "";
+  let AllTaskByTodoId = "";
+  let AllTaskContentByTodoId = "";
   if (isSuccess) {
-    sortedTasks = [...allTasksByEmail?.data];
-    taskContent = (        <ul>
-      {sortedTasks?.map((task) => (
-        <li key={task.id}>
-          <p>{task.title}</p>          
-        </li>
-      ))}
-    </ul>)
+    AllTaskByEmail = [...allTasksByEmail?.data];
+    AllTaskContentByEmail = "NotUsed";
+    AllTaskByTodoId = AllTaskByEmail.filter((task) => task.id_Todo === todo.id);
+    AllTaskContentByTodoId = (
+      <ul>
+        {AllTaskByTodoId?.map((task) => (
+          <li key={task.id}>
+            <TaskCard task={task} />
+          </li>
+        ))}
+      </ul>
+    );
   }
 
   return (
@@ -67,7 +84,9 @@ function TodoCard({ todo }) {
         {todo.title}
         <STYLEDParagraphProgress>
           {todo.is_completed}%
-          <STYLEDFavorite>{todo.is_completed === 100 ? <FcApproval/> : <FcDoughnutChart/> }</STYLEDFavorite>
+          <STYLEDFavorite>
+            {todo.is_completed === 100 ? <FcApproval /> : <FcDoughnutChart />}
+          </STYLEDFavorite>
         </STYLEDParagraphProgress>
       </STYLEDTitle>
 
@@ -75,7 +94,9 @@ function TodoCard({ todo }) {
         {todo.description ? todo.description : <i>...</i>}
 
         <STYLEDTodoOptionsContainer>
+          <STYLEDButton >
           <FcSearch />
+          </STYLEDButton>
           <STYLEDButton onClick={toggleFavorite}>
             {favorite ? <FcLike /> : <FcLikePlaceholder />}
           </STYLEDButton>
@@ -85,29 +106,39 @@ function TodoCard({ todo }) {
         </STYLEDTodoOptionsContainer>
 
 
-
       </STYLEDTodoContainer>
-          {taskContent}
+
+      <STYLEDTaskContainer>{AllTaskContentByTodoId}</STYLEDTaskContainer>
     </>
   );
 }
 
 export default TodoCard;
 
+const STYLEDTaskContainer = styled.div`
+  font-size: 0.8rem;
+  border: solid 1px var(--main-color);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 5%;
+`;
+
 const STYLEDFavorite = styled.div`
- /* font-size: 1.5rem; */
-`
+  font-size: 1.5rem;
+`;
 const STYLEDCompleted = styled.div`
- /* font-size: 1.5rem; */
-`
+  font-size: 1.5rem;
+`;
 
 const STYLEDTitle = styled.div`
-
   display: flex;
-  align-items:center;
+  align-items: center;
   justify-content: space-around;
 
-  border-radius: 5px;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+
   color: var(--secondary-color);
 
   background: linear-gradient(
@@ -116,7 +147,7 @@ const STYLEDTitle = styled.div`
     var(--background-color) ${(props) => props.progressValue}%
   );
 
-  /* border: 1px solid transparent;
+  border: 1px solid var(--main-color);
   background-clip: padding-box;
   background-image: linear-gradient(
     to right,
@@ -125,18 +156,15 @@ const STYLEDTitle = styled.div`
   );
   background-size: ${(props) => props.progressValue}% 100%;
   background-repeat: no-repeat;
-  background-color: var(--background-color); */
+  background-color: var(--background-color);
 `;
 
 const STYLEDTodoContainer = styled.div`
-  font-size: 0.8rem;
-  border-radius: 10px;
-  max-width: 500px;
+  font-size: 1rem;
+
   min-height: 50px;
   border: solid 1px var(--main-color);
-
   padding: 2%;
-
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -144,7 +172,6 @@ const STYLEDTodoContainer = styled.div`
     border: 1px dashed var(--main-color);
   }
 
-  margin-bottom: 5%;
 `;
 
 const STYLEDTodoOptionsContainer = styled.div`

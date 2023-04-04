@@ -22,15 +22,15 @@ const request = async (endpoint, params, method = "get", body = null ) =>
     // console.log(url)
     if (body && method !== "get") {
         options.body = JSON.stringify(body);
-        console.log(options.body)
+        // console.log(options.body)
     }
     try
     {
-        console.log(url)
-        console.log(options)
+        // console.log(url)
+        // console.log(options)
         const resp = await fetch(url, options);
         const json = await resp.json();        
-        console.log(json);
+        // console.log(json);
         return json;
     }
     catch (error)

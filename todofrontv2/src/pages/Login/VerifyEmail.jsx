@@ -12,12 +12,12 @@ function VerifyEmail() {
   const searchParams = new URLSearchParams(location.search);
   const token = searchParams.get("t");
 
-  console.log(token)
+  // console.log(token)
 
   const handleClick = async () => {
     try {
       const resp = await fetcher.post(`verify-email`, { token });
-      console.log(resp);
+      // console.log(resp);
       if (resp.result){
         toast.success(<ButtonReturnToLogin msg="Validation de votre compte avec success !"/>);
       }else{

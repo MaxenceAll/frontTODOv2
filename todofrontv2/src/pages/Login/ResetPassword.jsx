@@ -26,7 +26,7 @@ function ResetPassword() {
   } = useForm();
 
   const onSubmit = async (data) => {
-    console.log(data);
+    // console.log(data);
 
     if (data.pincode1 !== data.pincode2) {
       toast.error(`Oooooops les mots de passe ne correspondent pas !`);
@@ -34,10 +34,10 @@ function ResetPassword() {
     }
     const token = searchParams.get("t");
     data.token = token;
-    console.log(token);
-    console.log(data.token);
+    // console.log(token);
+    // console.log(data.token);
     const resp = await fetcher.post("reset", data);
-    console.log(resp);
+    // console.log(resp);
     if (resp.result) {
       toast.success(
         <ButtonReturnToLogin

@@ -57,9 +57,9 @@ function Login() {
   async function handleRenewPassword(e) {
     // e.preventDefault();
     const emailObject = { email };
-    console.log(emailObject);
+    // console.log(emailObject);
     const resp = await fetcher.post("renew", emailObject);
-    console.log(resp);
+    // console.log(resp);
     setIsModalOpenForgottenPassword(false);
     if (resp.result) {
       toast.success(
@@ -92,11 +92,11 @@ function Login() {
     if (!resp.result) {
       toast.error(`Oops erreur. Retour de l'api : ${resp.message}`);
     } else {
-      console.log(resp);
+      // console.log(resp);
       toast.success(<ButtonReturnToHome />);
       setAuth(resp);
       setAuthCookie(resp.token ?? null, { "max-age": `${60 * 60 * 24}` });
-      console.log(authCookie);
+      // console.log(authCookie);
     }
   };
   const onSubmit2 = async (data) => {
@@ -105,18 +105,18 @@ function Login() {
       toast.error(`Oooooops les mots de passe ne correspondent pas !`);
       return;
     }
-    console.log(data);
+    // console.log(data);
     const resp = await fetcher.post("signup", data);
-    console.log(resp);
+    // console.log(resp);
     if (resp.result) {
-      console.log("yo its ok");
+      // console.log("yo its ok");
       toast.success(
         `Création faite avec success ! Vérifiez votre compte avec votre adresse mail : ${data.email}`
       );
       // TODO AJOUTER LE LOGIN AUTO APRES SIGNUP
     } else {
       // TODO PB ici avec le toast (vérifier le json de retour (la structure))
-      console.log("yo its not ok");
+      // console.log("yo its not ok");
       toast.error(`Oooooops erreur lors de la création !`);
     }
     // reset();

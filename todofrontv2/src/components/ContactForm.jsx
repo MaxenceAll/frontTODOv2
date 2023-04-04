@@ -22,10 +22,10 @@ const ContactForm = () => {
     const { name, email, subject, message } = data;
 
     //TODO envoyer le mail en prenant ces données.
-    console.log("Nom: ", name);
-    console.log("Mail: ", email);
-    console.log("Sujet: ", subject);
-    console.log("Message: ", message);
+    // console.log("Nom: ", name);
+    // console.log("Mail: ", email);
+    // console.log("Sujet: ", subject);
+    // console.log("Message: ", message);
     alert("pas encore fonctionnel !");
     toast.success(`Message envoyé avec success avec comme adresse de contact : ${data.email}`);
     reset();
