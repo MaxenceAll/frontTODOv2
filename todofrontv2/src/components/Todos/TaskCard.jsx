@@ -6,7 +6,7 @@ import { STYLEDButton } from "../../styles/genericButton";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-import { BiCheckbox,  BiCheckboxChecked} from "react-icons/bi";
+import { BiCheckbox, BiCheckboxChecked } from "react-icons/bi";
 
 import {
   FcHighPriority,
@@ -15,16 +15,20 @@ import {
   FcDeleteRow,
   FcCheckmark,
   FcCancel,
-  FcInspection
+  FcInspection,
 } from "react-icons/fc";
 import {
-    useSoftDeleteTaskMutation,
+  useSoftDeleteTaskMutation,
   useUpdateTaskCompletedMutation,
+  useUpdateTaskDescMutation,
   useUpdateTaskPriorityMutation,
+  useUpdateTaskTitleMutation,
 } from "../../features/todosSlice";
 import DeadlineBox from "./DeadlineBox";
 import { STYLEDInput } from "../../styles/genericInput";
 import Checkbox from "./Checkbox";
+import { STYLEDhr } from "../../styles/genericHR";
+import { useForm } from "react-hook-form";
 
 function TaskCard({ task }) {
   const formattedDate = format(
@@ -62,13 +66,51 @@ function TaskCard({ task }) {
     setPriority(combien);
   };
 
-    // DELETE LOGIC
-    const [softDeleteTask] = useSoftDeleteTaskMutation();
-    const handleDelete = () => {
+  // DELETE LOGIC
+  const [softDeleteTask] = useSoftDeleteTaskMutation();
+  const handleDelete = () => {
     softDeleteTask(task.id);
-      toast.info(`${task.title} supprimé avec succes !`);
-    };
+    toast.info(`${task.title} supprimé avec succes !`);
+  };
 
+  //  EDIT Title LOGIC:
+  const {
+    register,
+    handleSubmit,
+    formState: { errors = "" },
+    reset,
+  } = useForm();
+
+  const [editTitle, setEditTitle] = useState(false);
+  const [updateTitle, { updateTitleIsLoading }] = useUpdateTaskTitleMutation();
+  const handleDoubleClickNewTitle = (e) => {
+    e.stopPropagation();
+    setEditTitle(!editTitle);
+    reset();
+  };
+  const handleSubmitNewTitle = (data) => {
+    // console.log(data);
+    updateTitle({ id: task.id, title: data.title });
+    toast.success(`Changement de titre avec success !`);
+    setEditTitle(false);
+    reset();
+  };
+
+  // Edit Desc Logic
+  const [editDesc, setEditDesc] = useState(false);
+  const [updateDesc, { updateDescIsLoading }] = useUpdateTaskDescMutation();
+  const handleDoubleClickNewDesc = (e) => {
+    e.stopPropagation();
+    setEditDesc(!editDesc);
+    reset();
+  };
+  const handleSubmitNewDesc = (data) => {
+    // console.log(data);
+    updateDesc({ id: task.id, description: data.description });
+    toast.success(`Changement de description avec success !`);
+    setEditTitle(false);
+    reset();
+  };
   return (
     <>
       {/*  TODO Trouver un moyen de déplacer cette logique ailleurs (main.jsx ?) */}
@@ -95,14 +137,88 @@ function TaskCard({ task }) {
             defaultChecked={task.is_completed}
             id={task.id}
             onChange={toggleIsCompleted}
-          /> */}  
+          /> */}
 
-          {completed  ? <BiCheckboxChecked onClick={toggleIsCompleted} /> : <BiCheckbox onClick={toggleIsCompleted}/>}
-
+          {completed ? (
+            <BiCheckboxChecked onClick={toggleIsCompleted} />
+          ) : (
+            <BiCheckbox onClick={toggleIsCompleted} />
+          )}
         </STYLEDCheckArea>
 
         <STYLEDContentArea>
-          {task.title}- A faire :{task.description}
+          <STYLEDTaskTitle onDoubleClick={handleDoubleClickNewTitle}>
+            {!editTitle ? (
+              task.title
+            ) : (
+              <>
+                <form onSubmit={handleSubmit(handleSubmitNewTitle)}>
+                  <STYLEDInput
+                    placeholder="Saisir le nouveau titre"
+                    type="text"
+                    name="title"
+                    {...register("title", {
+                      required: "Saisir un nouveau titre !",
+                      validate: {
+                        checkLength: (value) => value.length <= 30,
+                      },
+                    })}
+                  ></STYLEDInput>
+
+                  <STYLEDButton width="12%" type="submit">
+                    ✓
+                  </STYLEDButton>
+                  <STYLEDButton width="12%" onClick={handleDoubleClickNewTitle}>
+                    ❌
+                  </STYLEDButton>
+
+                  {errors.title?.type === "checkLength" && (
+                    <STYLEDErrorMessage>
+                      Maximum 30 signes svp !
+                    </STYLEDErrorMessage>
+                  )}
+                </form>
+              </>
+            )}
+          </STYLEDTaskTitle>
+
+          <STYLEDhr />
+
+          <STYLEDTaskDesc onDoubleClick={handleDoubleClickNewDesc}>
+            {!editDesc ? (
+              task.description
+            ) : (
+              <>
+                <form onSubmit={handleSubmit(handleSubmitNewDesc)}>
+                  <STYLEDInput
+                    width={"74%"}
+                    placeholder="Saisir la nouvelle description ?"
+                    type="text"
+                    name="description"
+                    {...register("description", {
+                      required: "Saisir une description",
+                      validate: {
+                        checkLength: (value) => value.length <= 255,
+                      },
+                    })}
+                  ></STYLEDInput>
+
+                  <STYLEDButton width="12%" type="submit">
+                    ✓
+                  </STYLEDButton>
+                  <STYLEDButton width="12%" onClick={handleDoubleClickNewDesc}>
+                    ❌
+                  </STYLEDButton>
+
+                  {errors.description?.type === "checkLength" && (
+                    <STYLEDErrorMessage>
+                      Maximum 30 signes svp !
+                    </STYLEDErrorMessage>
+                  )}
+                </form>
+              </>
+            )}
+          </STYLEDTaskDesc>
         </STYLEDContentArea>
 
         <STYLEDDlineArea>
@@ -111,25 +227,17 @@ function TaskCard({ task }) {
         </STYLEDDlineArea>
 
         <STYLEDTodoOptionsContainer>
-          <STYLEDButton 
-          priority={priority}
-          onClick={() => handlePriority(1)}>
+          <STYLEDButton priority={priority} onClick={() => handlePriority(1)}>
             <FcHighPriority />
           </STYLEDButton>
-          <STYLEDButton 
-          priority={priority}
-          onClick={() => handlePriority(2)}>
+          <STYLEDButton priority={priority} onClick={() => handlePriority(2)}>
             <FcMediumPriority />
           </STYLEDButton>
-          <STYLEDButton 
-          priority={priority}
-          onClick={() => handlePriority(3)}>
+          <STYLEDButton priority={priority} onClick={() => handlePriority(3)}>
             <FcLowPriority />
           </STYLEDButton>
           &nbsp;
-          <STYLEDButton
-          onClick={handleDelete}
-          >
+          <STYLEDButton onClick={handleDelete}>
             <FcDeleteRow />
           </STYLEDButton>
         </STYLEDTodoOptionsContainer>
@@ -140,8 +248,16 @@ function TaskCard({ task }) {
 
 export default TaskCard;
 
-const STYLEDCheckbox = styled.input`
+const STYLEDTaskTitle = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;
+const STYLEDTaskDesc = styled.div`
+  font-size: 0.8rem;
+`;
+
+const STYLEDCheckbox = styled.input``;
 
 const STYLEDTaskContainer = styled.div`
   /* display: flex;
@@ -184,6 +300,8 @@ const STYLEDCheckArea = styled.div`
   /* margin: 25%; */
 `;
 const STYLEDContentArea = styled.div`
+  /* pour gèrer le focus sur double click */
+  user-select: none;
   grid-area: contentArea;
   border-left: 1px solid var(--main-color);
   padding: 1%;

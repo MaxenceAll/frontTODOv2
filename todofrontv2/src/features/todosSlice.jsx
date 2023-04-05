@@ -169,6 +169,28 @@ export const todosApi = createApi({
     }),
 
 
+    updateTaskTitle: builder.mutation({
+      query: ({ id, title }) => ({
+        url: `task/${id}`,
+        method: "PUT",
+        body: { title },
+      }),
+      invalidatesTags: ["Tasks"],
+    }),
+
+    
+    updateTaskDesc: builder.mutation({
+      query: ({ id, description }) => ({
+        url: `task/${id}`,
+        method: "PUT",
+        body: { description },
+      }),
+      invalidatesTags: ["Tasks"],
+    }),
+
+
+
+
 
 
   }),
@@ -188,4 +210,6 @@ export const {
   useUpdateTodoTitleMutation,
   useUpdateTodoDescMutation,
   useCreateTaskMutation,
+  useUpdateTaskTitleMutation,
+  useUpdateTaskDescMutation,
 } = todosApi;

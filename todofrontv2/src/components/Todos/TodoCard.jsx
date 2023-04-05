@@ -75,7 +75,7 @@ function TodoCard({ todo }) {
       </ul>
     );
   }
-
+    //TODO REMOVE THIS REF, react hook form setFocus()
   const inputNewTitleRef = useRef(null);
   const {
     register,
@@ -99,6 +99,7 @@ function TodoCard({ todo }) {
     reset();
   };
 
+  // EDIT desc LOGIC
   const [editDesc, setEditDesc] = useState(false);
   const [updateDesc, { updateDescIsLoading }] = useUpdateTodoDescMutation();
   const handleDoubleClickNewDesc = () => {
