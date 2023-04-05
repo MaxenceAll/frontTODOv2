@@ -12,7 +12,7 @@ export function DateDuJour() {
     return () => clearInterval(interval);
   }, []);
 
-  const formattedDate = format(date, "dd MMMM yyyy, hh:mm:ss " , {
+  const formattedDate = format(date, "dd MMMM yyyy, HH:mm:ss" , {
     locale: fr,});
 
   return <div>{formattedDate}</div>;

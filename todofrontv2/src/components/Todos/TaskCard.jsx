@@ -6,17 +6,25 @@ import { STYLEDButton } from "../../styles/genericButton";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
+import { BiCheckbox,  BiCheckboxChecked} from "react-icons/bi";
+
 import {
   FcHighPriority,
   FcLowPriority,
   FcMediumPriority,
   FcDeleteRow,
+  FcCheckmark,
+  FcCancel,
+  FcInspection
 } from "react-icons/fc";
 import {
     useSoftDeleteTaskMutation,
   useUpdateTaskCompletedMutation,
   useUpdateTaskPriorityMutation,
 } from "../../features/todosSlice";
+import DeadlineBox from "./DeadlineBox";
+import { STYLEDInput } from "../../styles/genericInput";
+import Checkbox from "./Checkbox";
 
 function TaskCard({ task }) {
   const formattedDate = format(
@@ -34,8 +42,8 @@ function TaskCard({ task }) {
     updateTaskCompleted({ id: task.id, is_completed: completed ? 0 : 1 });
     {
       completed
-        ? toast.success(`${task.title} est maintenant finie !`)
-        : toast.info(`${task.title} n'est plus terminée.`);
+        ? toast.info(`${task.title} n'est plus terminée.`)
+        : toast.success(`${task.title} est maintenant finie !`);
     }
   };
   //   Priority LOGIC :
@@ -82,28 +90,40 @@ function TaskCard({ task }) {
       />
       <STYLEDTaskContainer priority={task.id_priority} isChecked={completed}>
         <STYLEDCheckArea>
-          <input
+          {/* <STYLEDCheckbox
             type="checkbox"
             defaultChecked={task.is_completed}
             id={task.id}
             onChange={toggleIsCompleted}
-          />
+          /> */}  
+
+          {completed  ? <BiCheckboxChecked onClick={toggleIsCompleted} /> : <BiCheckbox onClick={toggleIsCompleted}/>}
+
         </STYLEDCheckArea>
 
         <STYLEDContentArea>
           {task.title}- A faire :{task.description}
         </STYLEDContentArea>
 
-        <STYLEDDlineArea>Deadline : {formattedDate} </STYLEDDlineArea>
+        <STYLEDDlineArea>
+          {/* <DeadlineBox deadline={formattedDate} /> */}
+          <DeadlineBox deadline={task.deadline_date} />
+        </STYLEDDlineArea>
 
         <STYLEDTodoOptionsContainer>
-          <STYLEDButton onClick={() => handlePriority(1)}>
+          <STYLEDButton 
+          priority={priority}
+          onClick={() => handlePriority(1)}>
             <FcHighPriority />
           </STYLEDButton>
-          <STYLEDButton onClick={() => handlePriority(2)}>
+          <STYLEDButton 
+          priority={priority}
+          onClick={() => handlePriority(2)}>
             <FcMediumPriority />
           </STYLEDButton>
-          <STYLEDButton onClick={() => handlePriority(3)}>
+          <STYLEDButton 
+          priority={priority}
+          onClick={() => handlePriority(3)}>
             <FcLowPriority />
           </STYLEDButton>
           &nbsp;
@@ -119,6 +139,9 @@ function TaskCard({ task }) {
 }
 
 export default TaskCard;
+
+const STYLEDCheckbox = styled.input`
+`;
 
 const STYLEDTaskContainer = styled.div`
   /* display: flex;
@@ -147,6 +170,7 @@ const STYLEDTaskContainer = styled.div`
   ${(props) => (props.isChecked ? "text-decoration: line-through" : "")};
 
   margin-bottom: 1%;
+  /* height: 100px; */
 `;
 
 const STYLEDCheckArea = styled.div`
@@ -155,8 +179,9 @@ const STYLEDCheckArea = styled.div`
   justify-content: center;
   align-items: center;
   /* margin = clickable */
-  transform: scale(3);
-  margin: 25%;
+  /* transform: scale(2); */
+  font-size: 10vw;
+  /* margin: 25%; */
 `;
 const STYLEDContentArea = styled.div`
   grid-area: contentArea;
@@ -169,6 +194,7 @@ const STYLEDDlineArea = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  max-height: 33px;
 `;
 const STYLEDTBoxArea = styled.div`
   grid-area: tBoxArea;

@@ -35,6 +35,7 @@ function Login() {
   // console.log("Logged user is:", auth?.data?.email);
   const [authCookie, setAuthCookie] = useCookie("auth");
 
+  // TODO : react hook form gère le focus setFOcus() voir docs
   useEffect(() => {
     if (emailInputRef.current) {
       emailInputRef.current.focus();
@@ -161,7 +162,6 @@ function Login() {
               id="email"
               name="email"
               type="email"
-              className="form-control"
               placeholder="Votre adresse email"
               onChange={(e) => setEmail(e.target.value)}
               required

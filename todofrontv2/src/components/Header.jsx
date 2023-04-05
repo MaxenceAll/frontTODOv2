@@ -65,6 +65,9 @@ function Header() {
 export default Header;
 
 const STYLEDLayoutHeader = styled.div`
+  /* pour gèrer le focus sur double click */
+  user-select: none;
+  
   width: 100%;
   display: flex;
   justify-content: space-between;

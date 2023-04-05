@@ -16,6 +16,9 @@ function Footer() {
 export default Footer;
 
 const STYLEDFooterContainer = styled.footer`
+  /* pour gèrer le focus sur double click */
+  user-select: none;
+
   margin-top: auto;
   border-top: 2px solid var(--main-color);
   display: flex;

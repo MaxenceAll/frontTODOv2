@@ -8,11 +8,19 @@ import {
 } from "../styles/genericContainer";
 import FilterBox from "../components/Todos/FilterBox";
 
-import  {useGetAllTasksByEmailQuery, useGetAllTodosByEmailQuery}  from "../features/todosSlice";
-import { FaListUl } from "react-icons/fa";
+import {
+  useGetAllTasksByEmailQuery,
+  useGetAllTodosByEmailQuery,
+} from "../features/todosSlice";
+import ButtonReturnToLogin from "../components/Tools/ButtonReturnToLogin";
+import { STYLEDButton } from "../styles/genericButton";
+import useCookie from "../Hooks/useCookie";
+import { useNavigate } from "react-router-dom";
 
 // TESTS AVEC RTK QUERIES (de redux)
 export const Home = () => {
+
+  const navigate = useNavigate();
   const { auth, setAuth } = useContext(AuthContext);
   // console.log(auth);
 
@@ -27,7 +35,7 @@ export const Home = () => {
     isError,
     isLoading,
     isSuccess,
-  } = useGetAllTodosByEmailQuery(auth?.data?.email); 
+  } = useGetAllTodosByEmailQuery(auth?.data?.email);
 
   let content;
   if (isSuccess) {
@@ -62,27 +70,23 @@ export const Home = () => {
       sortedTodos = sortedTodos.filter((todo) => todo.is_completed !== 100);
     }
     // le pourcentage de completed :
-    let completedTodos = sortedTodos.filter(todo => todo.is_completed === 100);
-
+    let completedTodos = sortedTodos.filter(
+      (todo) => todo.is_completed === 100
+    );
 
     content = (
       <>
         <FilterBox
           sortOrderById={sortOrderById}
           setSortOrderById={setSortOrderById}
-
           showFavorites={showFavorites}
           setShowFavorites={setShowFavorites}
-
           sortOrderByProgress={sortOrderByProgress}
           setSortOrderByProgress={setSortOrderByProgress}
-
           showCompleted={showCompleted}
           setShowCompleted={setShowCompleted}
-
           numTodos={sortedTodos.length}
           completedTodos={completedTodos}
-
         />
         <ul>
           {sortedTodos?.map((todo) => (
@@ -107,38 +111,30 @@ export const Home = () => {
   }
 
   if (isLoading) return <h1> Loading...</h1>;
+
   return (
     <>
-      <p>
-      Coucou {auth?.data?.email}
-      </p>
-      <STYLEDContainer>
-        <STYLEDContainerBox>{content}</STYLEDContainerBox>
-      </STYLEDContainer>
+      <>
+        {auth?.data?.email ? (
+          <div>
+            Hello {auth?.data?.email}, &nbsp;
+            <STYLEDButton onClick={() => navigate("/login")}>
+              Se déconnecter
+            </STYLEDButton>
+          </div>
+        ) : (
+          <>
+            <p>Connectez vous pour commencer !</p>
+            <ButtonReturnToLogin />
+          </>
+        )}
+      </>
+
+      {auth?.data?.email && (
+        <STYLEDContainer>
+          <STYLEDContainerBox>{content}</STYLEDContainerBox>
+        </STYLEDContainer>
+      )}
     </>
   );
 };
-
-const STYLEDTodoContainer = styled.article`
-background-color: pink;
-`;
-
-
-
-const STYLEDFilterContainer = styled.div`
-  display: flex;
-  justify-content: center;
-  flex-direction: column;
-  align-items: center;
-  margin: 20px;
-`;
-const STYLEDFilterContainerBox = styled.div`
-  display: flex;
-  justify-content: center;
-  flex-direction: column;
-  align-items: center;
-  width: 100%;
-  border-radius: 15px;
-  overflow: hidden;
-  box-shadow: rgba(0, 0, 0, 0.05) 0 6px 245px, rgba(0, 0, 0, 0.08) 0 0 0 5px;
-`;

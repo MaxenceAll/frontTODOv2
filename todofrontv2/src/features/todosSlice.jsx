@@ -59,6 +59,7 @@ export const todosApi = createApi({
       providesTags: ["Tasks"],
     }),
     
+
     getAllTasksByTodoId: builder.query({
       query: (id) => `task/task/${id}`,
       transformResponse: (response) => {
@@ -84,6 +85,18 @@ export const todosApi = createApi({
       }),
       invalidatesTags: ['Todos'],
     }),
+
+
+    
+    createTask: builder.mutation({
+      query: (title,description, id_priority, id_Todo) => ({
+        url: 'task',
+        method: 'POST',
+        body: JSON.stringify( title, description, id_priority, id_Todo ),
+      }),
+      invalidatesTags: ['Tasks'],
+    }),
+
 
 
 
@@ -137,9 +150,23 @@ export const todosApi = createApi({
 
 
 
+    updateTodoTitle: builder.mutation({
+      query: ({ id, title }) => ({
+        url: `todo/${id}`,
+        method: "PUT",
+        body: { title },
+      }),
+      invalidatesTags: ["Todos"],
+    }),
 
-
-
+    updateTodoDesc: builder.mutation({
+      query: ({ id, description }) => ({
+        url: `todo/${id}`,
+        method: "PUT",
+        body: { description },
+      }),
+      invalidatesTags: ["Todos"],
+    }),
 
 
 
@@ -158,4 +185,7 @@ export const {
   useUpdateTaskCompletedMutation,
   useUpdateTaskPriorityMutation,
   useSoftDeleteTaskMutation,
+  useUpdateTodoTitleMutation,
+  useUpdateTodoDescMutation,
+  useCreateTaskMutation,
 } = todosApi;

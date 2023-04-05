@@ -33,6 +33,7 @@ function FilterBox({
   setShowCompleted,
   numTodos,
   completedTodos,
+  FcAddColumn,
 }) {
   const [ascendingById, setAscendingById] = useState(true);
   const [ascendingByProgress, setAscendingByProgress] = useState(true);
@@ -93,14 +94,14 @@ function FilterBox({
 
   // NEW TODO
   const { auth, setAuth } = useContext(AuthContext);
-  const [createAlbum, { isLoading }] = useCreateTodoMutation();
+  const [createTodo, { isLoading }] = useCreateTodoMutation();
   const [newTodoTitle, setNewTodoTitle] = useState("");
   const [newTodoDesc, setNewTodoDesc] = useState("");
 
   const handleSubmitNewTodo = (e) => {
     e.preventDefault();
     if (newTodoTitle && newTodoDesc) {
-      createAlbum({
+      createTodo({
         id_customer: auth?.data?.id,
         title: newTodoTitle,
         description: newTodoDesc,
@@ -150,15 +151,14 @@ function FilterBox({
 
   // Gestion ouverture filterbox
   const [filterBox, setFilterBox] = useState(true);
-  const toggleFilterBox = ()=>{
-    setFilterBox(prevFilterBox => !prevFilterBox);
-    if (filterBox){
-      toast.info("Ouverture de la filter box !")
+  const toggleFilterBox = () => {
+    setFilterBox((prevFilterBox) => !prevFilterBox);
+    if (filterBox) {
+      toast.info("Ouverture de la filter box !");
+    } else {
+      toast.info("Fermeture de la filter box !");
     }
-    else{
-      toast.info("Fermeture de la filter box !")
-    }
-  }
+  };
 
   return (
     <STYLEDFilterboxContainer>
@@ -180,98 +180,102 @@ function FilterBox({
         }}
       />
       <STYLEDFilterBoxContainerBox>
-     {filterBox ?   (<>
-     <div>
-          <div>
-            <u>Trier:</u>
+        {filterBox ? (
+          <>
             <div>
-              <STYLEDFilterBoxButton
-                isActiveFilter={!ascendingById ? "active" : ""}
-                onClick={handleSortOrderByIdToggle}
-              >
-                {ascendingById ? <BsSortUpAlt /> : <BsSortDown />}
-              </STYLEDFilterBoxButton>
+              <div>
+                <u>Trier:</u>
+                <div>
+                  <STYLEDFilterBoxButton
+                    isActiveFilter={!ascendingById ? "active" : ""}
+                    onClick={handleSortOrderByIdToggle}
+                  >
+                    {ascendingById ? <BsSortUpAlt /> : <BsSortDown />}
+                  </STYLEDFilterBoxButton>
+                </div>
+                <div>
+                  <STYLEDFilterBoxButton
+                    isActiveFilter={!ascendingByProgress ? "active" : ""}
+                    onClick={handleSortOrderByProgressToggle}
+                  >
+                    {ascendingByProgress ? (
+                      <BsSortNumericDownAlt />
+                    ) : (
+                      <BsSortNumericUp />
+                    )}
+                  </STYLEDFilterBoxButton>
+                </div>
+                <STYLEDButton onClick={resetAllFilters}>Reset</STYLEDButton>
+              </div>
+
+              <div>
+                <u>Filtrer:</u>
+                <div>
+                  <STYLEDFilterBoxButton
+                    isActiveFilter={showFavorites ? "active" : ""}
+                    onClick={handleShowFavoritesToggle}
+                  >
+                    {showFavorites ? <BsSuitHeartFill /> : <BsSuitHeart />}
+                  </STYLEDFilterBoxButton>
+                </div>
+                <div>
+                  <STYLEDFilterBoxButton
+                    isActiveFilter={showCompleted ? "active" : ""}
+                    onClick={handleShowCompletedToggle}
+                  >
+                    {showCompleted ? <BsFileEarmarkBreak /> : <BsFileCheck />}
+                  </STYLEDFilterBoxButton>
+                </div>
+                <STYLEDButton onClick={resetAllFilters}>Reset</STYLEDButton>
+              </div>
             </div>
+
             <div>
-              <STYLEDFilterBoxButton
-                isActiveFilter={!ascendingByProgress ? "active" : ""}
-                onClick={handleSortOrderByProgressToggle}
-              >
-                {ascendingByProgress ? (
-                  <BsSortNumericDownAlt />
-                ) : (
-                  <BsSortNumericUp />
-                )}
-              </STYLEDFilterBoxButton>
+              <u>Informations :</u>
+              <p>
+                {/* Illisible mais tellement beau ! ☺*/}
+                {numTodos === 0
+                  ? "Aucune todo !"
+                  : numTodos === 1
+                  ? "Todo trouvée."
+                  : `${numTodos} Todos trouvées.`}
+              </p>
+              <p>
+                {completedTodos.length === 0
+                  ? "Aucune todo !"
+                  : completedTodos.length === 1
+                  ? `${completedTodos.length}/${numTodos} completée. (${(
+                      (completedTodos.length / numTodos) *
+                      100
+                    ).toFixed(0)}%)`
+                  : `${completedTodos.length}/${numTodos} completées. (${(
+                      (completedTodos.length / numTodos) *
+                      100
+                    ).toFixed(0)}%)`}
+              </p>
+
+              <div>
+                <p>
+                  <u>Création d'une TODO:</u>
+                </p>
+                {newTodoSection}
+              </div>
             </div>
-            <STYLEDButton onClick={resetAllFilters}>Reset</STYLEDButton>
-          </div>
+          </>
+        ) : (
+          <p></p>
+        )}
 
-          <div>
-            <u>Filtrer:</u>
-            <div>
-              <STYLEDFilterBoxButton
-                isActiveFilter={showFavorites ? "active" : ""}
-                onClick={handleShowFavoritesToggle}
-              >
-                {showFavorites ? <BsSuitHeartFill /> : <BsSuitHeart />}
-              </STYLEDFilterBoxButton>
-            </div>
-            <div>
-              <STYLEDFilterBoxButton
-                isActiveFilter={showCompleted ? "active" : ""}
-                onClick={handleShowCompletedToggle}
-              >
-                {showCompleted ? <BsFileEarmarkBreak /> : <BsFileCheck />}
-              </STYLEDFilterBoxButton>
-            </div>
-            <STYLEDButton onClick={resetAllFilters}>Reset</STYLEDButton>
-          </div>
-        </div>
-
-        <div>
-          <u>Informations :</u>
-          <p>
-            {/* Illisible mais tellement beau ! ☺*/}
-            {numTodos === 0
-              ? "Aucune todo !"
-              : numTodos === 1
-              ? "Todo trouvée."
-              : `${numTodos} Todos trouvées.`}
-          </p>
-          <p>
-            {completedTodos.length === 0
-              ? "Aucune todo !"
-              : completedTodos.length === 1
-              ? `${completedTodos.length}/${numTodos} completée. (${(
-                  (completedTodos.length / numTodos) *
-                  100
-                ).toFixed(0)}%)`
-              : `${completedTodos.length}/${numTodos} completées. (${(
-                  (completedTodos.length / numTodos) *
-                  100
-                ).toFixed(0)}%)`}
-          </p>
-
-          <div>
-            <p>
-              <u>Création d'une TODO:</u>
-            </p>
-            {newTodoSection}
-          </div>
-        </div>
-        </>)
-        :
-        <>Ouvrir la boite à filtre.</>
-        }
-
-        {!filterBox &&<STYLEDOpenFilterBoxButton
-        onClick={toggleFilterBox}
-        >🡃</STYLEDOpenFilterBoxButton>}
-        {filterBox &&<STYLEDCloseFilterBoxButton
-        onClick={toggleFilterBox}
-        >🠽</STYLEDCloseFilterBoxButton>}
-
+        {!filterBox && (
+          <STYLEDOpenFilterBoxButton onClick={toggleFilterBox}>
+            Ouvrir la boite 🡃 à outils.
+          </STYLEDOpenFilterBoxButton>
+        )}
+        {filterBox && (
+          <STYLEDCloseFilterBoxButton onClick={toggleFilterBox}>
+            🠽
+          </STYLEDCloseFilterBoxButton>
+        )}
       </STYLEDFilterBoxContainerBox>
     </STYLEDFilterboxContainer>
   );
@@ -279,9 +283,11 @@ function FilterBox({
 
 export default FilterBox;
 
+const STYLEDBoiteAOutilContainer = styled.div``;
+
 const STYLEDOpenFilterBoxButton = styled.button`
   width: 100%;
-  height: 15px;
+  height: 25px;
 
   font-size: 1rem;
   position: absolute;
@@ -318,15 +324,10 @@ const STYLEDCloseFilterBoxButton = styled.button`
   &:hover {
     color: var(--secondary-color);
     background-color: var(--main-color);
-    transform: translateY(-3px);
+    transform: translateY(-1px);
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
   }
 `;
-
-
-
-
-
 
 const STYLEDFormNewTodo = styled.form`
   transition: all 0.3s ease;
@@ -340,17 +341,18 @@ const STYLEDLabelFormNewTodo = styled.label`
   font-style: italic;
 `;
 const STYLEDFilterboxContainer = styled.div`
+  /* pour gèrer le focus sur double click */
+  user-select: none;
+
   display: flex;
   justify-content: center;
   flex-direction: row;
   align-items: center;
   border: 2px groove var(--main-color);
   margin-bottom: 5%;
-  
 `;
 
 const STYLEDFilterBoxContainerBox = styled.div`
-  transition: all 0.3s ease;
   position: relative;
   display: flex;
   justify-content: center;
