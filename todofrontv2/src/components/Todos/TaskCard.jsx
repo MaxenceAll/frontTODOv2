@@ -21,6 +21,7 @@ import {
   useSoftDeleteTaskMutation,
   useUpdateTaskCompletedMutation,
   useUpdateTaskDescMutation,
+  useUpdateTaskDlineMutation,
   useUpdateTaskPriorityMutation,
   useUpdateTaskTitleMutation,
 } from "../../features/todosSlice";
@@ -30,18 +31,16 @@ import Checkbox from "./Checkbox";
 import { STYLEDhr } from "../../styles/genericHR";
 import { useForm } from "react-hook-form";
 
-function TaskCard({ task }) {
-  const formattedDate = format(
-    new Date(task.deadline_date),
-    "dd MMMM yyyy à HH:mm:ss",
-    { locale: fr }
-  );
-
+function TaskCard({ task, numberOfCompletedTask, setNumberOfCompletedTask }) {
   //   Complete LOGIC :
   const [completed, setCompleted] = useState(task.is_completed);
   const [updateTaskCompleted, { updateTaskIsLoading }] =
     useUpdateTaskCompletedMutation();
   const toggleIsCompleted = () => {
+    completed
+      ? setNumberOfCompletedTask((prevState) => prevState - 1)
+      : setNumberOfCompletedTask((prevState) => prevState + 1);
+
     setCompleted(!completed);
     updateTaskCompleted({ id: task.id, is_completed: completed ? 0 : 1 });
     {
@@ -111,6 +110,29 @@ function TaskCard({ task }) {
     setEditTitle(false);
     reset();
   };
+
+  // EDIT Deadline logic
+  const [editDline, setEditDline] = useState(false);
+  const [updateDline, { updateDlineIsLoading }] = useUpdateTaskDlineMutation();
+  const handleDoubleClickNewDline = (e) => {
+    e.stopPropagation();
+    setEditDline(!editDline);
+  };
+  const handleSubmitNewDline = (data) => {
+    console.log(data);
+    if(data.deadline_date){
+    updateDline({ id: task.id, deadline_date: data.deadline_date });
+    toast.success(`Changement de deadline avec success !`);
+    setEditDline(false);
+    reset();
+  }else{
+    updateDline({ id: task.id, deadline_date: "" });
+    toast.success(`Changement de deadline avec success !`);
+    setEditDline(false);
+    reset();
+  }
+  };
+
   return (
     <>
       {/*  TODO Trouver un moyen de déplacer cette logique ailleurs (main.jsx ?) */}
@@ -221,10 +243,37 @@ function TaskCard({ task }) {
           </STYLEDTaskDesc>
         </STYLEDContentArea>
 
-        <STYLEDDlineArea>
-          {/* <DeadlineBox deadline={formattedDate} /> */}
-          <DeadlineBox deadline={task.deadline_date} />
+
+
+
+
+        <STYLEDDlineArea onDoubleClick={handleDoubleClickNewDline}>
+          {!editDline ? (
+            <DeadlineBox deadline={task.deadline_date} />
+          ) : (
+            <>
+              <form onSubmit={handleSubmit(handleSubmitNewDline)}>
+                <STYLEDInput
+                  width={"72%"}
+                  placeholder="Saisir la nouvelle dead-line ?"
+                  type="datetime-local"
+                  name="deadline_date"
+                  {...register("deadline_date")}
+                ></STYLEDInput>
+
+                <STYLEDButton width="12%" type="submit">
+                  ✓
+                </STYLEDButton>
+                <STYLEDButton width="12%" onClick={handleDoubleClickNewDline}>
+                  ❌
+                </STYLEDButton>
+              </form>
+            </>
+          )}
         </STYLEDDlineArea>
+
+
+
 
         <STYLEDTodoOptionsContainer>
           <STYLEDButton priority={priority} onClick={() => handlePriority(1)}>
@@ -307,6 +356,8 @@ const STYLEDContentArea = styled.div`
   padding: 1%;
 `;
 const STYLEDDlineArea = styled.div`
+  /* pour gèrer le focus sur double click */
+  user-select: none;
   grid-area: dlineArea;
   border-top: 1px solid var(--main-color);
   display: flex;

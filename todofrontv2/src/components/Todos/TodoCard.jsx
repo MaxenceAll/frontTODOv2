@@ -1,4 +1,4 @@
-import { useContext, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import {
@@ -6,20 +6,18 @@ import {
   FcLike,
   FcSearch,
   FcCancel,
-  FcApproval,
-  FcDoughnutChart,
   FcAddColumn,
 } from "react-icons/fc";
 import styled from "styled-components";
 import {
   useCreateTaskMutation,
   useGetAllTasksByEmailQuery,
+  useGetAllTasksByTodoIdQuery,
   useSoftDeleteMutation,
   useUpdateFavoriteMutation,
   useUpdateTodoDescMutation,
   useUpdateTodoTitleMutation,
 } from "../../features/todosSlice";
-
 import { STYLEDButton } from "../../styles/genericButton";
 import { AuthContext } from "../../Contexts/AuthContext";
 import TaskCard from "./TaskCard";
@@ -30,11 +28,18 @@ import GenericModal from "../Tools/GenericModal";
 import { STYLEDForm } from "../../styles/genericForm";
 import { STYLEDhr } from "../../styles/genericHR";
 
+import Confetti from "react-confetti";
+import useWindowSize from "react-use/lib/useWindowSize";
+
+import { AnimatedCheckmark, MODES } from "../Checkmark/AnimatedCheckmark";
+import PulsingHeart from "../PulsingHeart/PulsingHeart";
+
 function TodoCard({ todo }) {
   const [favorite, setFavorite] = useState(todo.is_favorite);
   const [updateFavorite, { updateFavoriteIsLoading }] =
     useUpdateFavoriteMutation();
-  const toggleFavorite = () => {
+  const toggleFavorite = (e) => {
+    e.stopPropagation();
     setFavorite(!favorite);
     updateFavorite({ id: todo.id, is_favorite: favorite ? 0 : 1 });
     {
@@ -45,37 +50,51 @@ function TodoCard({ todo }) {
   };
 
   const [softDelete] = useSoftDeleteMutation();
-  const handleDelete = () => {
+  const handleDelete = (e) => {
+    e.stopPropagation();
     softDelete(todo.id);
     toast.info(`${todo.title} supprimé avec succes !`);
   };
 
   const { auth, setAuth } = useContext(AuthContext);
   const {
-    data: allTasksByEmail,
+    data: allTasksById,
     error,
     isError,
     isSuccess,
-  } = useGetAllTasksByEmailQuery(auth?.data?.email);
-  let AllTaskByEmail = [];
-  let AllTaskContentByEmail = "";
-  let AllTaskByTodoId = "";
+  } = useGetAllTasksByTodoIdQuery(todo.id);
+
+  const [numberOfTask, setNumberOfTask] = useState(0);
+  const [numberOfCompletedTask, setNumberOfCompletedTask] = useState(0);
+  // console.log(((numberOfCompletedTask / numberOfTask) * 100).toFixed(0));
+
+  useEffect(() => {
+    if (allTasksById?.data) {
+      setNumberOfTask(allTasksById.data.length);
+      setNumberOfCompletedTask(
+        (allTasksById?.data?.filter((task) => task.is_completed === 1)).length
+      );
+    }
+  }, [allTasksById]);
+
   let AllTaskContentByTodoId = "";
   if (isSuccess) {
-    AllTaskByEmail = [...allTasksByEmail?.data];
-    AllTaskContentByEmail = "NotUsed";
-    AllTaskByTodoId = AllTaskByEmail.filter((task) => task.id_Todo === todo.id);
     AllTaskContentByTodoId = (
       <ul>
-        {AllTaskByTodoId?.map((task) => (
+        {allTasksById?.data?.map((task) => (
           <li key={task.id}>
-            <TaskCard task={task} />
+            <TaskCard
+              task={task}
+              numberOfCompletedTask={numberOfCompletedTask}
+              setNumberOfCompletedTask={setNumberOfCompletedTask}
+            />
           </li>
         ))}
       </ul>
     );
   }
-    //TODO REMOVE THIS REF, react hook form setFocus()
+
+  //TODO REMOVE THIS REF, react hook form setFocus()
   const inputNewTitleRef = useRef(null);
   const {
     register,
@@ -116,7 +135,8 @@ function TodoCard({ todo }) {
 
   //  show tasks logic :
   const [showTasks, setShowTasks] = useState(false);
-  const toggleView = () => {
+  const toggleView = (e) => {
+    e.stopPropagation();
     setShowTasks(!showTasks);
   };
 
@@ -137,7 +157,11 @@ function TodoCard({ todo }) {
     });
     reset();
     setIsModalNewTask(false);
+    toast.success("Nouvelle tâche ajoutée avec succes.");
   };
+
+  // Confetti logic :
+  const { width, height } = useWindowSize();
 
   return (
     <>
@@ -195,10 +219,12 @@ function TodoCard({ todo }) {
 
       <STYLEDTitle
         // prop pour le style :
-        progressValue={todo.is_completed}
+        progressValue={((numberOfCompletedTask / numberOfTask) * 100).toFixed(
+          0
+        )}
         onDoubleClick={handleDoubleClickNewTitle}
       >
-        <STYLEDFavorite>{favorite ? <FcLike /> : ``}</STYLEDFavorite>
+        <STYLEDFavorite>{favorite ? <PulsingHeart /> : ``}</STYLEDFavorite>
         {!editTitle ? (
           todo.title
         ) : (
@@ -229,10 +255,36 @@ function TodoCard({ todo }) {
             </form>
           </>
         )}
+
         <STYLEDParagraphProgress>
-          {todo.is_completed}%
+          {/* {numberOfCompletedTask}/{numberOfTask} */}
+          {((numberOfCompletedTask / numberOfTask) * 100).toFixed(0)}%
           <STYLEDCompleted>
-            {todo.is_completed === 100 ? <FcApproval /> : <FcDoughnutChart />}
+            {numberOfCompletedTask === numberOfTask ? (
+              <div>
+                <Confetti
+                  recycle={false}
+                  numberOfPieces={1000}
+                  width={width}
+                  height={height}
+                />
+                <AnimatedCheckmark
+                  mode={MODES.SUCCESS}
+                  size={34}
+                  collapseFactor={1}
+                  baseColor={"var(--main-color)"}
+                />
+              </div>
+            ) : (
+              <div>
+                <AnimatedCheckmark
+                  mode={MODES.LOADING}
+                  size={34}
+                  collapseFactor={1}
+                  baseColor={"var(--main-color)"}
+                />
+              </div>
+            )}
           </STYLEDCompleted>
         </STYLEDParagraphProgress>
       </STYLEDTitle>
@@ -274,13 +326,13 @@ function TodoCard({ todo }) {
         )}
 
         <STYLEDTodoOptionsContainer>
-          <STYLEDButton onClick={toggleView}>
+          <STYLEDButton onClick={(e) => toggleView(e)}>
             <FcSearch />
           </STYLEDButton>
-          <STYLEDButton onClick={toggleFavorite}>
+          <STYLEDButton onClick={(e) => toggleFavorite(e)}>
             {favorite ? <FcLike /> : <FcLikePlaceholder />}
           </STYLEDButton>
-          <STYLEDButton onClick={handleDelete}>
+          <STYLEDButton onClick={(e) => handleDelete(e)}>
             <FcCancel />
           </STYLEDButton>
 
@@ -322,7 +374,7 @@ const STYLEDTitle = styled.div`
   /* pour gèrer le focus sur double click */
   user-select: none;
 
-  /* min-height: 100px; */
+  min-height: 60px;
 
   display: flex;
   align-items: center;
@@ -347,10 +399,10 @@ const STYLEDTitle = styled.div`
     to right,
     var(--main-color),
     var(--background-color)
-    );
-    background-size: ${(props) => props.progressValue}% 100%;
-    background-repeat: no-repeat;
-    background-color: var(--background-color);
+  );
+  background-size: ${(props) => props.progressValue}% 100%;
+  background-repeat: no-repeat;
+  background-color: var(--background-color);
 
   border: 1px solid var(--main-color);
 `;

@@ -7,10 +7,9 @@ import {
   HiHome,
 } from "react-icons/hi";
 import { NavLink } from "react-router-dom";
+import PulsingHeart from "./PulsingHeart/PulsingHeart";
 
 function Header() {
-
-
 
   return (
     <STYLEDLayoutHeader className="layout-header">
@@ -55,8 +54,12 @@ function Header() {
           className={({ isActive }) => (isActive ? "active-link" : null)}
         >
           <HiInformationCircle />
-          <STYLEDHiddenMobile className="hide-mobile">Apropos</STYLEDHiddenMobile>
+          <STYLEDHiddenMobile className="hide-mobile">
+            Apropos
+          </STYLEDHiddenMobile>
         </NavLink>
+
+
       </STYLEDHeaderBtnContainer>
     </STYLEDLayoutHeader>
   );
@@ -67,7 +70,7 @@ export default Header;
 const STYLEDLayoutHeader = styled.div`
   /* pour gèrer le focus sur double click */
   user-select: none;
-  
+
   width: 100%;
   display: flex;
   justify-content: space-between;

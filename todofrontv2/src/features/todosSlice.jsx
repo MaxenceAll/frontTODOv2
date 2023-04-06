@@ -189,6 +189,16 @@ export const todosApi = createApi({
     }),
 
 
+    updateTaskDline: builder.mutation({
+      query: ({ id, deadline_date }) => ({
+        url: `task/${id}`,
+        method: "PUT",
+        body: { deadline_date },
+      }),
+      invalidatesTags: ["Tasks"],
+    }),
+
+
 
 
 
@@ -212,4 +222,5 @@ export const {
   useCreateTaskMutation,
   useUpdateTaskTitleMutation,
   useUpdateTaskDescMutation,
+  useUpdateTaskDlineMutation,
 } = todosApi;

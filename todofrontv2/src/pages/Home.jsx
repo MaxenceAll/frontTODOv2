@@ -17,6 +17,7 @@ import { STYLEDButton } from "../styles/genericButton";
 import useCookie from "../Hooks/useCookie";
 import { useNavigate } from "react-router-dom";
 
+
 // TESTS AVEC RTK QUERIES (de redux)
 export const Home = () => {
 
@@ -116,12 +117,12 @@ export const Home = () => {
     <>
       <>
         {auth?.data?.email ? (
-          <div>
+          <STYLEDWelcomeDiv>
             Hello {auth?.data?.email}, &nbsp;
             <STYLEDButton onClick={() => navigate("/login")}>
               Se déconnecter
             </STYLEDButton>
-          </div>
+          </STYLEDWelcomeDiv>
         ) : (
           <>
             <p>Connectez vous pour commencer !</p>
@@ -138,3 +139,7 @@ export const Home = () => {
     </>
   );
 };
+
+const STYLEDWelcomeDiv = styled.div`
+padding-bottom: 2%;
+`

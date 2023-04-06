@@ -150,7 +150,7 @@ function FilterBox({
   );
 
   // Gestion ouverture filterbox
-  const [filterBox, setFilterBox] = useState(true);
+  const [filterBox, setFilterBox] = useState(false);
   const toggleFilterBox = () => {
     setFilterBox((prevFilterBox) => !prevFilterBox);
     if (filterBox) {
@@ -309,11 +309,11 @@ const STYLEDOpenFilterBoxButton = styled.button`
 
 const STYLEDCloseFilterBoxButton = styled.button`
   width: 100%;
-  height: 15px;
+  height: 10px;
 
   font-size: 1rem;
   position: absolute;
-  bottom: -7%;
+  bottom: 0%;
 
   border-top-left-radius: 10px;
   border-top-right-radius: 10px;
@@ -360,13 +360,13 @@ const STYLEDFilterBoxContainerBox = styled.div`
   align-items: center;
 
   width: 100%;
-  max-width: 500px;
+
   border-radius: 15px;
   /* box-shadow: rgba(0, 0, 0, 0.05) 0 6px 245px, rgba(0, 0, 0, 0.08) 0 0 0 5px; */
-  padding: 3%;
+  /* padding: 3%;
 
   padding-top: 5%;
-  margin-bottom: 3%;
+  margin-bottom: 3%; */
 `;
 
 const STYLEDFilterBoxButton = styled.button`

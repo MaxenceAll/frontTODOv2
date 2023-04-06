@@ -2,8 +2,13 @@ import React from "react";
 import styled from "styled-components";
 import { format, differenceInMinutes, differenceInHours, differenceInDays, differenceInMonths } from "date-fns";
 import { fr } from "date-fns/locale";
+import { STYLEDErrorMessage } from "../../styles/genericParagraphError";
 
 function DeadlineBox(props) {
+  // console.log (props)
+  if (props.deadline === "" || props.deadline === "0000-00-00 00:00:00" || props.deadline === null ) {
+    return <STYLEDErrorMessage>Double-click pour ajouter une dead-line.</STYLEDErrorMessage>;
+  }
   const deadlineTimestamp = new Date(props.deadline).getTime();
   const currentTimestamp = Date.now();
   const diffInMinutes = differenceInMinutes(deadlineTimestamp, currentTimestamp);
@@ -37,7 +42,7 @@ export default DeadlineBox;
 
 
 const BoxContainer = styled.div`
-font-size: 0.5rem;
+font-size: 0.7rem;
   /* width: 100%; */
   /* background-clip: padding-box;
   background-image: linear-gradient(
