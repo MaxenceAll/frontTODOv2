@@ -63,11 +63,8 @@ export const todosApi = createApi({
     getAllTasksByTodoId: builder.query({
       query: (id) => `task/task/${id}`,
       transformResponse: (response) => {
-        // console.log(response);
-        // SORTING les todos par id (obligé de décomposer l'objet et le recomposer pour garder la structure originelle)
-        const sortedData = response.data.sort((a, b) => b.id - a.id);
         return {
-          data: sortedData,
+          data: response.data,
           result: response.result,
           message: response.message,
         };

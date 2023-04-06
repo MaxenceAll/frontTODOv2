@@ -106,9 +106,9 @@ function Login() {
       toast.error(`Oooooops les mots de passe ne correspondent pas !`);
       return;
     }
-    // console.log(data);
+    console.log(data);
     const resp = await fetcher.post("signup", data);
-    // console.log(resp);
+    console.log(resp);
     if (resp.result) {
       // console.log("yo its ok");
       toast.success(
@@ -399,7 +399,7 @@ function Login() {
                 )}
                 {errors.pincode2?.type === "checkLength" && (
                   <STYLEDErrorMessage>
-                    Le mot de passe doit être de 6 signes, bah wé.
+                    Le mot de passe doit être de 4 signes minimum, bah wé.
                   </STYLEDErrorMessage>
                 )}
                 <STYLEDButton width="50%" onClick={openForgottenPasswordModal}>

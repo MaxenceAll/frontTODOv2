@@ -26,6 +26,8 @@ import VerifyEmail from "./pages/Login/VerifyEmail";
 import VerifyEmailSuccess from "./pages/login/VerifyEmailSuccess";
 import ResetPassword from "./pages/login/ResetPassword";
 
+import { Home2 } from "./pages/Home2";
+
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<Layout />} errorElement={<Error />}>

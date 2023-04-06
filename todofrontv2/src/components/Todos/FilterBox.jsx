@@ -116,9 +116,7 @@ function FilterBox({
 
   const newTodoSection = (
     <STYLEDFormNewTodo onSubmit={handleSubmitNewTodo}>
-      <STYLEDLabelFormNewTodo htmlFor="new-todo-title">
-        Son nom ?
-      </STYLEDLabelFormNewTodo>
+
       <div>
         <STYLEDInput
           type="text"
@@ -129,9 +127,6 @@ function FilterBox({
           disabled={isLoading}
         />
       </div>
-      <STYLEDLabelFormNewTodo htmlFor="new-todo-desc">
-        Sa description ?
-      </STYLEDLabelFormNewTodo>
       <div>
         <STYLEDInput
           type="text"
@@ -182,7 +177,7 @@ function FilterBox({
       <STYLEDFilterBoxContainerBox>
         {filterBox ? (
           <>
-            <div>
+            <>
               <div>
                 <u>Trier:</u>
                 <div>
@@ -228,31 +223,9 @@ function FilterBox({
                 </div>
                 <STYLEDButton onClick={resetAllFilters}>Reset</STYLEDButton>
               </div>
-            </div>
+            </>
 
-            <div>
-              <u>Informations :</u>
-              <p>
-                {/* Illisible mais tellement beau ! ☺*/}
-                {numTodos === 0
-                  ? "Aucune todo !"
-                  : numTodos === 1
-                  ? "Todo trouvée."
-                  : `${numTodos} Todos trouvées.`}
-              </p>
-              <p>
-                {completedTodos.length === 0
-                  ? "Aucune todo !"
-                  : completedTodos.length === 1
-                  ? `${completedTodos.length}/${numTodos} completée. (${(
-                      (completedTodos.length / numTodos) *
-                      100
-                    ).toFixed(0)}%)`
-                  : `${completedTodos.length}/${numTodos} completées. (${(
-                      (completedTodos.length / numTodos) *
-                      100
-                    ).toFixed(0)}%)`}
-              </p>
+
 
               <div>
                 <p>
@@ -260,7 +233,7 @@ function FilterBox({
                 </p>
                 {newTodoSection}
               </div>
-            </div>
+
           </>
         ) : (
           <p></p>
@@ -287,9 +260,9 @@ const STYLEDBoiteAOutilContainer = styled.div``;
 
 const STYLEDOpenFilterBoxButton = styled.button`
   width: 100%;
-  height: 25px;
+  height: 15px;
 
-  font-size: 1rem;
+  font-size: 0.6rem;
   position: absolute;
   top: -1%;
 
@@ -344,6 +317,7 @@ const STYLEDFilterboxContainer = styled.div`
   /* pour gèrer le focus sur double click */
   user-select: none;
 
+
   display: flex;
   justify-content: center;
   flex-direction: row;
@@ -360,13 +334,14 @@ const STYLEDFilterBoxContainerBox = styled.div`
   align-items: center;
 
   width: 100%;
+  
 
   border-radius: 15px;
   /* box-shadow: rgba(0, 0, 0, 0.05) 0 6px 245px, rgba(0, 0, 0, 0.08) 0 0 0 5px; */
-  /* padding: 3%;
+  padding: 3%;
 
-  padding-top: 5%;
-  margin-bottom: 3%; */
+  /* padding-top: 5%; */
+  /* margin-bottom: 3%; */
 `;
 
 const STYLEDFilterBoxButton = styled.button`
@@ -385,7 +360,6 @@ const STYLEDFilterBoxButton = styled.button`
   &:hover {
     color: var(--secondary-color);
     background-color: var(--main-color);
-
     transform: translateY(-3px);
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
   }
@@ -397,7 +371,7 @@ const STYLEDFilterBoxButton = styled.button`
     props.isActiveFilter ? "var(--secondary-color)" : "var(--main-color)"};
 
   transform: ${(props) => (props.isActiveFilter ? "translateY(-3px)" : "")};
-
+  
   box-shadow: ${(props) =>
     props.isActiveFilter ? "0 14px 16px rgba(0, 0, 0, 0.2)" : ""};
 `;

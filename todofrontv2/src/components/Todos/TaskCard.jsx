@@ -32,6 +32,7 @@ import { STYLEDhr } from "../../styles/genericHR";
 import { useForm } from "react-hook-form";
 
 function TaskCard({ task, numberOfCompletedTask, setNumberOfCompletedTask }) {
+  //  TODO erk fix this
   //   Complete LOGIC :
   const [completed, setCompleted] = useState(task.is_completed);
   const [updateTaskCompleted, { updateTaskIsLoading }] =
@@ -41,13 +42,13 @@ function TaskCard({ task, numberOfCompletedTask, setNumberOfCompletedTask }) {
       ? setNumberOfCompletedTask((prevState) => prevState - 1)
       : setNumberOfCompletedTask((prevState) => prevState + 1);
 
+    updateTaskCompleted({ id: task.id, is_completed: !completed ? 1 : 0 });
+
+    completed
+      ? toast.info(`${task.title} n'est plus terminée.`)
+      : toast.success(`${task.title} est maintenant finie !`);
+
     setCompleted(!completed);
-    updateTaskCompleted({ id: task.id, is_completed: completed ? 0 : 1 });
-    {
-      completed
-        ? toast.info(`${task.title} n'est plus terminée.`)
-        : toast.success(`${task.title} est maintenant finie !`);
-    }
   };
   //   Priority LOGIC :
   const [priority, setPriority] = useState(task.id_priority);
@@ -120,17 +121,17 @@ function TaskCard({ task, numberOfCompletedTask, setNumberOfCompletedTask }) {
   };
   const handleSubmitNewDline = (data) => {
     console.log(data);
-    if(data.deadline_date){
-    updateDline({ id: task.id, deadline_date: data.deadline_date });
-    toast.success(`Changement de deadline avec success !`);
-    setEditDline(false);
-    reset();
-  }else{
-    updateDline({ id: task.id, deadline_date: "" });
-    toast.success(`Changement de deadline avec success !`);
-    setEditDline(false);
-    reset();
-  }
+    if (data.deadline_date) {
+      updateDline({ id: task.id, deadline_date: data.deadline_date });
+      toast.success(`Changement de deadline avec success !`);
+      setEditDline(false);
+      reset();
+    } else {
+      updateDline({ id: task.id, deadline_date: "" });
+      toast.success(`Changement de deadline avec success !`);
+      setEditDline(false);
+      reset();
+    }
   };
 
   return (
@@ -243,10 +244,6 @@ function TaskCard({ task, numberOfCompletedTask, setNumberOfCompletedTask }) {
           </STYLEDTaskDesc>
         </STYLEDContentArea>
 
-
-
-
-
         <STYLEDDlineArea onDoubleClick={handleDoubleClickNewDline}>
           {!editDline ? (
             <DeadlineBox deadline={task.deadline_date} />
@@ -271,9 +268,6 @@ function TaskCard({ task, numberOfCompletedTask, setNumberOfCompletedTask }) {
             </>
           )}
         </STYLEDDlineArea>
-
-
-
 
         <STYLEDTodoOptionsContainer>
           <STYLEDButton priority={priority} onClick={() => handlePriority(1)}>

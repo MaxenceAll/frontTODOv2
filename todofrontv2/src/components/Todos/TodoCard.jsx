@@ -56,6 +56,7 @@ function TodoCard({ todo }) {
     toast.info(`${todo.title} supprimé avec succes !`);
   };
 
+  //  GET TASK DATA
   const { auth, setAuth } = useContext(AuthContext);
   const {
     data: allTasksById,
@@ -63,7 +64,6 @@ function TodoCard({ todo }) {
     isError,
     isSuccess,
   } = useGetAllTasksByTodoIdQuery(todo.id);
-
   const [numberOfTask, setNumberOfTask] = useState(0);
   const [numberOfCompletedTask, setNumberOfCompletedTask] = useState(0);
   // console.log(((numberOfCompletedTask / numberOfTask) * 100).toFixed(0));
@@ -145,7 +145,8 @@ function TodoCard({ todo }) {
   const [newTaskTitle, setNewTaskTitle] = useState("");
   const [newTaskDesc, setNewTaskDesc] = useState("");
   const [newTaskdeadline_date, setNewTaskdeadline_date] = useState("");
-  const [createTodo, { createTodoIsLoading }] = useCreateTaskMutation();
+  const [createTodo, { isLoading: createTodoIsLoading }] =
+    useCreateTaskMutation();
 
   const handleNewTask = (e) => {
     e.preventDefault();
@@ -341,11 +342,15 @@ function TodoCard({ todo }) {
           </STYLEDButton>
         </STYLEDTodoOptionsContainer>
       </STYLEDTodoContainer>
-      {showTasks ? (
+
+      <STYLEDTaskContainer style={{ display: showTasks ? "block" : "none" }}>
+        {AllTaskContentByTodoId}
+      </STYLEDTaskContainer>
+      {/* {showTasks ? (
         <STYLEDTaskContainer>{AllTaskContentByTodoId}</STYLEDTaskContainer>
       ) : (
-        <STYLEDTaskContainer></STYLEDTaskContainer>
-      )}
+        <STYLEDTaskContainerHidden>{AllTaskContentByTodoId}</STYLEDTaskContainerHidden>
+      )} */}
     </>
   );
 }
@@ -361,6 +366,17 @@ const STYLEDTaskContainer = styled.div`
   align-items: center;
   margin-bottom: 5%;
   /* padding:2%; */
+`;
+const STYLEDTaskContainerHidden = styled.div`
+  transition: all 0.3s ease;
+  font-size: 0.8rem;
+  border: solid 1px var(--main-color);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 5%;
+  /* padding:2%; */
+  display: none;
 `;
 
 const STYLEDFavorite = styled.div`

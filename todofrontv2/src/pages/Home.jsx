@@ -75,6 +75,18 @@ export const Home = () => {
       (todo) => todo.is_completed === 100
     );
 
+
+
+      // new logic :
+      
+
+
+
+
+
+
+
+
     content = (
       <>
         <FilterBox
@@ -124,10 +136,10 @@ export const Home = () => {
             </STYLEDButton>
           </STYLEDWelcomeDiv>
         ) : (
-          <>
+          <STYLEDWelcomeDiv>
             <p>Connectez vous pour commencer !</p>
             <ButtonReturnToLogin />
-          </>
+          </STYLEDWelcomeDiv>
         )}
       </>
 
