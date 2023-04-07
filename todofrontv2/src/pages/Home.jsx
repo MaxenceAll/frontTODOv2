@@ -75,18 +75,6 @@ export const Home = () => {
       (todo) => todo.is_completed === 100
     );
 
-
-
-      // new logic :
-      
-
-
-
-
-
-
-
-
     content = (
       <>
         <FilterBox
@@ -101,13 +89,11 @@ export const Home = () => {
           numTodos={sortedTodos.length}
           completedTodos={completedTodos}
         />
-        <ul>
-          {sortedTodos?.map((todo) => (
+        {sortedTodos?.map((todo) => (
             <li key={todo.id}>
               <TodoCard todo={todo} />
             </li>
           ))}
-        </ul>
       </>
     );
   }

@@ -27,6 +27,10 @@ import VerifyEmailSuccess from "./pages/login/VerifyEmailSuccess";
 import ResetPassword from "./pages/login/ResetPassword";
 
 import { Home2 } from "./pages/Home2";
+import Todos from "./pages/Dashboard/Todos";
+import Tasks from "./pages/Dashboard/Tasks";
+import Users from "./pages/Dashboard/Users";
+import DashboardLayout from "./Layouts/DashboardLayout";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -38,7 +42,15 @@ const router = createBrowserRouter(
       <Route path="verify-email" element={<VerifyEmail />} />
       <Route path="success" element={<VerifyEmailSuccess />} />
       <Route path="themes" element={<Themes />} />
-      {/* <Route path="dashboard" element={<Dashboard />} /> */}
+
+        <Route element={<DashboardLayout />}>
+          <Route path="dashboard" element={<Dashboard/>} /> 
+          <Route path="dashboard/todos" element={<Todos/>} /> 
+          <Route path="dashboard/tasks" element={<Tasks/>} /> 
+          <Route path="dashboard/users" element={<Users/>} /> 
+
+        </Route>
+
       <Route path="*" element={<NotFound />} />
     </Route>
   )

@@ -16,6 +16,15 @@ export const todosApi = createApi({
     tagTypes: ["Todos", "Tasks"],
   }),
   endpoints: (builder) => ({
+
+
+
+    getCustomer: builder.query({
+      query: () => "customer",
+      providesTags: ["Customer"],
+    }),
+
+
     getAllTodos: builder.query({
       query: () => "todo",
       transformResponse: (response) => {
@@ -30,6 +39,23 @@ export const todosApi = createApi({
       },
       providesTags: ["Todos"],
     }),
+
+    getAllTasks: builder.query({
+      query: () => "task",
+      transformResponse: (response) => {
+        // console.log(response);
+        // SORTING les todos par id (obligé de décomposer l'objet et le recomposer pour garder la structure originelle)
+        const sortedData = response.data.sort((a, b) => b.id - a.id);
+        return {
+          data: sortedData,
+          result: response.result,
+          message: response.message,
+        };
+      },
+    }),
+
+
+
 
     getAllTodosByEmail: builder.query({
       query: (email) => `todo/table/${email}`,
@@ -46,7 +72,6 @@ export const todosApi = createApi({
       providesTags: ["Todos"],
     }),
 
-
     getAllTasksByEmail: builder.query({
       query: (email) => `task/table/${email}`,
       transformResponse: (response) => {
@@ -58,7 +83,6 @@ export const todosApi = createApi({
       },
       providesTags: ["Tasks"],
     }),
-    
 
     getAllTasksByTodoId: builder.query({
       query: (id) => `task/task/${id}`,
@@ -72,30 +96,23 @@ export const todosApi = createApi({
       providesTags: ["Tasks"],
     }),
 
-
-
     createTodo: builder.mutation({
-      query: (title,description, id_customer) => ({
-        url: 'todo',
-        method: 'POST',
-        body: JSON.stringify( title, description, id_customer ),
+      query: (title, description, id_customer) => ({
+        url: "todo",
+        method: "POST",
+        body: JSON.stringify(title, description, id_customer),
       }),
-      invalidatesTags: ['Todos'],
+      invalidatesTags: ["Todos"],
     }),
 
-
-    
     createTask: builder.mutation({
-      query: (title,description, id_priority, id_Todo) => ({
-        url: 'task',
-        method: 'POST',
-        body: JSON.stringify( title, description, id_priority, id_Todo ),
+      query: (title, description, id_priority, id_Todo) => ({
+        url: "task",
+        method: "POST",
+        body: JSON.stringify(title, description, id_priority, id_Todo),
       }),
-      invalidatesTags: ['Tasks'],
+      invalidatesTags: ["Tasks"],
     }),
-
-
-
 
     updateFavorite: builder.mutation({
       query: ({ id, is_favorite }) => ({
@@ -107,26 +124,25 @@ export const todosApi = createApi({
       // invalidatesTags: ["Todos"],
     }),
 
-    updateTaskCompleted: builder.mutation ({
-      query: ({ id , is_completed }) => ({
-          url: `task/${id}`,
-          method: "PUT",
-          body: { is_completed },
+    updateTaskCompleted: builder.mutation({
+      query: ({ id, is_completed }) => ({
+        url: `task/${id}`,
+        method: "PUT",
+        body: { is_completed },
       }),
       // Vérifier l'utilitée d'invalider pour un favoris
       // invalidatesTags: ["Tasks"],
     }),
 
-    updateTaskPriority: builder.mutation ({
-      query: ({ id , id_priority }) => ({
-          url: `task/${id}`,
-          method: "PUT",
-          body: { id_priority },
+    updateTaskPriority: builder.mutation({
+      query: ({ id, id_priority }) => ({
+        url: `task/${id}`,
+        method: "PUT",
+        body: { id_priority },
       }),
       // Vérifier l'utilitée d'invalider pour un favoris
       invalidatesTags: ["Tasks"],
     }),
-
 
     softDeleteTask: builder.mutation({
       query: (id) => ({
@@ -136,7 +152,6 @@ export const todosApi = createApi({
       invalidatesTags: ["Tasks"],
     }),
 
-
     softDelete: builder.mutation({
       query: (id) => ({
         url: `todo/${id}`,
@@ -144,8 +159,6 @@ export const todosApi = createApi({
       }),
       invalidatesTags: ["Todos"],
     }),
-
-
 
     updateTodoTitle: builder.mutation({
       query: ({ id, title }) => ({
@@ -165,7 +178,6 @@ export const todosApi = createApi({
       invalidatesTags: ["Todos"],
     }),
 
-
     updateTaskTitle: builder.mutation({
       query: ({ id, title }) => ({
         url: `task/${id}`,
@@ -175,7 +187,6 @@ export const todosApi = createApi({
       invalidatesTags: ["Tasks"],
     }),
 
-    
     updateTaskDesc: builder.mutation({
       query: ({ id, description }) => ({
         url: `task/${id}`,
@@ -184,7 +195,6 @@ export const todosApi = createApi({
       }),
       invalidatesTags: ["Tasks"],
     }),
-
 
     updateTaskDline: builder.mutation({
       query: ({ id, deadline_date }) => ({
@@ -196,6 +206,18 @@ export const todosApi = createApi({
     }),
 
 
+    isAdmin: builder.query({
+      query: ({ email }) => ({
+        url: `customer/admin/${email}`,
+        method: "GET",
+        params: { email },
+      }),
+      onSuccess: (response, { query }) => {
+        const { email } = query.params;
+        console.log(`Response for isAdmin endpoint with email ${email}:`, response);
+      },      
+    }),
+    
 
 
 
@@ -205,6 +227,7 @@ export const todosApi = createApi({
 
 export const {
   useGetAllTodosQuery,
+  useGetAllTasksQuery,
   useGetAllTodosByEmailQuery,
   useCreateTodoMutation,
   useUpdateFavoriteMutation,
@@ -220,4 +243,6 @@ export const {
   useUpdateTaskTitleMutation,
   useUpdateTaskDescMutation,
   useUpdateTaskDlineMutation,
+  useGetCustomerQuery,
+  useIsAdminQuery,
 } = todosApi;
