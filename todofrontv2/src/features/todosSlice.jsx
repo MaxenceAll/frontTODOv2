@@ -40,12 +40,17 @@ export const todosApi = createApi({
       providesTags: ["Todos"],
     }),
 
+
+
+
+    
+
     getAllTasks: builder.query({
-      query: () => "task",
+      query: (page=1) => "task",
       transformResponse: (response) => {
         // console.log(response);
         // SORTING les todos par id (obligé de décomposer l'objet et le recomposer pour garder la structure originelle)
-        const sortedData = response.data.sort((a, b) => b.id - a.id);
+        const sortedData = response.data.sort((a, b) => a.id - b.id);
         return {
           data: sortedData,
           result: response.result,

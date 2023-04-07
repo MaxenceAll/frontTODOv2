@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { AdminContext } from "../../Contexts/AdminContext";
 import { useGetAllTasksQuery } from "../../features/todosSlice";
 import {
@@ -7,7 +7,11 @@ import {
 } from "../../styles/genericContainer";
 
 import Loader from "../../components/Loader/Loader";
+import { FixedSizeList } from 'react-window';
 
+import styled from "styled-components"
+import SmallTaskCard from "../../components/Dashboard/SmallTaskCard";
+import { STYLEDButton } from "../../styles/genericButton";
 
 function Tasks() {
   const {
@@ -17,27 +21,87 @@ function Tasks() {
     isLoading: allTasksIsLoading,
     isSuccess: allTasksIsSuccess,
   } = useGetAllTasksQuery();
-  console.log(allTasks);
-  console.log(useGetAllTasksQuery())
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(3);
+  const [activeButtonIndex, setActiveButtonIndex] = useState(0);
+
+  const handlePageChange = (selectedPage) => {
+    setCurrentPage(selectedPage+1);
+    setActiveButtonIndex(selectedPage);
+  }
+
+  const handleNextPageClick = () => {
+    setCurrentPage((prevPage) => prevPage + 1);
+    setActiveButtonIndex((prevPage) => prevPage + 1);
+  };
+
+  const handlePrevPageClick = () => {
+    setCurrentPage((prevPage) => prevPage - 1);
+    setActiveButtonIndex((prevPage) => prevPage - 1);
+  };
+
+  const handlePageSizeChange = (event) => {
+    setPageSize(Number(event.target.value));
+    setCurrentPage(1);
+    setActiveButtonIndex(0);
+  };
 
   let content = "";
   if (allTasksIsSuccess) {
+    const startIndex = pageSize * (currentPage - 1);
+    const endIndex = startIndex + pageSize;
+    const tasksToDisplay = allTasks?.data?.slice(startIndex, endIndex);
+
     content = (
       <>
-        <ul>
-          {allTasks?.data?.map((task) => (
-            <li key={task.id}>
-              •
-              {task.id}
-              {task.title}
-              {task.deadline_date}
-              {task.is_completed}
-              {task.description}
-              {task.id_priority}
-              {task.id_Todo}
-            </li>
+        <FixedSizeList
+          height={300}
+          itemCount={tasksToDisplay.length}
+          itemSize={100}
+          width={"100%"}
+        >
+          {({ index, style }) => (
+            <div style={style}>
+              <SmallTaskCard task={tasksToDisplay[index]} />
+            </div>
+          )}
+        </FixedSizeList>
+
+        <STYLEDPageContainer>
+          {Array.from({ length: Math.ceil(allTasks?.data?.length / pageSize) }, (_, i) => (
+            <STYLEDButton 
+            style={{
+              backgroundColor: activeButtonIndex === i ? "var(--main-color)" : "var(--secondary-color)",
+              color: activeButtonIndex === i ? "var(--background-color)" : "var(--main-color)",
+            }}            
+            key={i} onClick={() => handlePageChange(i)}>{i + 1}</STYLEDButton>
           ))}
-        </ul>
+        </STYLEDPageContainer>
+
+        <div>
+          <STYLEDButton width="40%"
+           onClick={handlePrevPageClick} disabled={currentPage === 1}>
+           Page Précédente
+          </STYLEDButton>
+          <span>&nbsp;Page {currentPage} of {Math.ceil(allTasks?.data?.length / pageSize)}&nbsp;</span>
+          <STYLEDButton width="40%"
+           onClick={handleNextPageClick} disabled={currentPage === (Math.ceil(allTasks?.data?.length / pageSize))}>
+            Page Suivante
+          </STYLEDButton>          
+        </div>
+
+        <div>
+          <label htmlFor="pageSize">Affichage par page:</label>
+          <select id="pageSize" value={pageSize} onChange={handlePageSizeChange}>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="5">5</option>
+            <option value="10">10</option>
+            <option value="15">15</option>
+            <option value={allTasks?.data?.length}>All</option>
+          </select>
+        </div>
+
       </>
     );
   }
@@ -78,3 +142,10 @@ function Tasks() {
 }
 
 export default Tasks;
+
+const STYLEDPageContainer = styled.div`
+display:flex;
+justify-content:center;
+align-items: center;
+
+`
