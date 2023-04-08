@@ -1,12 +1,13 @@
 import React from "react";
 import styled from "styled-components";
+import { STYLEDButton } from "../../styles/genericButton";
 
 function UserDetails(props) {
   const { user } = props;
 
   return (
     <StyledCard>
-      <StyledHeader>User Details</StyledHeader>
+      <StyledHeader>Carte utilisateur.</StyledHeader>
       <StyledCardBody>
         <StyledDetail>
           <StyledLabel>id:</StyledLabel>
@@ -38,6 +39,11 @@ function UserDetails(props) {
           <StyledValue>{user[0].is_admin}</StyledValue>
         </StyledDetail>
       </StyledCardBody>
+      <div>
+        <STYLEDButton>Edit...</STYLEDButton>
+        <STYLEDButton>Soft Delete</STYLEDButton>
+        <STYLEDButton>Hard Delete.</STYLEDButton>
+      </div>
     </StyledCard>
   );
 }

@@ -83,7 +83,7 @@ function Tasks() {
            onClick={handlePrevPageClick} disabled={currentPage === 1}>
            Page Précédente
           </STYLEDButton>
-          <span>&nbsp;Page {currentPage} of {Math.ceil(allTasks?.data?.length / pageSize)}&nbsp;</span>
+          <span>&nbsp;Page {currentPage}sur{Math.ceil(allTasks?.data?.length / pageSize)}&nbsp;</span>
           <STYLEDButton width="40%"
            onClick={handleNextPageClick} disabled={currentPage === (Math.ceil(allTasks?.data?.length / pageSize))}>
             Page Suivante

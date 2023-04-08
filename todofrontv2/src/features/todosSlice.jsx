@@ -225,6 +225,15 @@ export const todosApi = createApi({
     
 
 
+    updateTask: builder.mutation({
+      query: ({ id, title , description , id_priority , is_completed, deadline_date }) => ({
+        url: `task/${id}`,
+        method: "PUT",
+        body: { title , description , id_priority , is_completed, deadline_date },
+      }),
+      invalidatesTags: ["Tasks"],
+    }),
+
 
 
   }),
@@ -250,4 +259,5 @@ export const {
   useUpdateTaskDlineMutation,
   useGetCustomerQuery,
   useIsAdminQuery,
+  useUpdateTaskMutation,
 } = todosApi;

@@ -16,6 +16,7 @@ import ButtonReturnToLogin from "../components/Tools/ButtonReturnToLogin";
 import { STYLEDButton } from "../styles/genericButton";
 import useCookie from "../Hooks/useCookie";
 import { useNavigate } from "react-router-dom";
+import  Loader  from '../components/Loader/Loader'
 
 
 // TESTS AVEC RTK QUERIES (de redux)
@@ -109,7 +110,7 @@ export const Home = () => {
     );
   }
 
-  if (isLoading) return <h1> Loading...</h1>;
+  if (isLoading) return <h1> <Loader /></h1>;
 
   return (
     <>
