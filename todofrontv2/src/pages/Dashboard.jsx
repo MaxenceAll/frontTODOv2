@@ -6,51 +6,53 @@ import { AdminContext } from "../Contexts/AdminContext";
 import styled from "styled-components";
 
 function Dashboard() {
-  const { auth } = useContext(AuthContext);
-  const { setIsAdmin } = useContext(AdminContext);
-  const isAdminQuery = useIsAdminQuery({ email: auth?.data?.email });
-  const {
-    data: customers,
-    isLoading,
-    isSuccess,
-    isError,
-    error,
-  } = useGetCustomerQuery();
+  const { auth, setAuth } = useContext(AuthContext);
+  const { isAdmin, setIsAdmin } = useContext(AdminContext);
 
-  useEffect(() => {
-    if (isAdminQuery?.data?.result) {
-      setIsAdmin(true);
-    } else {
-      setIsAdmin(false);
-    }
-  }, [isAdminQuery?.data?.result]);
+  // console.log(auth)
 
   let content = "";
-  let foundUser = "";
+  if (isAdmin) {
+    const {
+      data: customers,
+      isLoading,
+      isSuccess,
+      isError,
+      error,
+    } = useGetCustomerQuery();
 
-  if (isSuccess) {
-    foundUser = customers?.data?.filter(
-      (customer) => customer.id === auth.data.id
-    );
-    content = (
-      <>
-        <UserDetails user={foundUser} />
-      </>
-    );
-  }
-  if (isLoading) {
-    content = (
-      <>
-        <div>Loading...</div>
-      </>
-    );
-  }
-  if (isError) {
-    content = (
-      <>
-        <div>Error : {error}</div>
-      </>
-    );
+   
+    let foundUser = "";
+
+    if (isSuccess) {
+      foundUser = customers?.data?.filter(
+        (customer) => customer.id === auth.data.id
+      );
+      // console.log(foundUser);
+      [foundUser] = foundUser;
+      // console.log(foundUser);
+      content = (
+        <>
+          <UserDetails user={foundUser} />
+        </>
+      );
+    }
+    if (isLoading) {
+      content = (
+        <>
+          <div>Loading...</div>
+        </>
+      );
+    }
+    if (isError) {
+      content = (
+        <>
+          <div>Error : {error}</div>
+        </>
+      );
+    }
+  } else {
+    content = "yo"
   }
 
   return <>{content}</>;

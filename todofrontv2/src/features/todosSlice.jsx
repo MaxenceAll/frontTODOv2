@@ -13,7 +13,7 @@ export const todosApi = createApi({
       return headers;
     },
     credentials: "include",
-    tagTypes: ["Todos", "Tasks"],
+    tagTypes: ["Todos", "Tasks", "Customer"],
   }),
   endpoints: (builder) => ({
 
@@ -235,6 +235,20 @@ export const todosApi = createApi({
     }),
 
 
+    
+    updateCustomer: builder.mutation({
+      query: ({ id, email , is_deleted , is_verified , is_admin }) => ({
+        url: `customer/${id}`,
+        method: "PUT",
+        body: { email , is_deleted , is_verified , is_admin },
+      }),
+      invalidatesTags: ["Customer"],
+    }),
+
+
+
+
+
 
   }),
 });
@@ -260,4 +274,5 @@ export const {
   useGetCustomerQuery,
   useIsAdminQuery,
   useUpdateTaskMutation,
+  useUpdateCustomerMutation,
 } = todosApi;

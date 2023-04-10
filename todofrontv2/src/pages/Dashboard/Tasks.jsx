@@ -1,45 +1,62 @@
 import React, { useContext, useState } from "react";
 import { AdminContext } from "../../Contexts/AdminContext";
-import { useGetAllTasksQuery } from "../../features/todosSlice";
+import {
+  useGetAllTasksByEmailQuery,
+  useGetAllTasksQuery,
+  useIsAdminQuery,
+} from "../../features/todosSlice";
 import {
   STYLEDContainer,
   STYLEDContainerBox,
 } from "../../styles/genericContainer";
 
 import Loader from "../../components/Loader/Loader";
-import { FixedSizeList } from 'react-window';
+import { FixedSizeList } from "react-window";
 
-import styled from "styled-components"
+import styled from "styled-components";
 import SmallTaskCard from "../../components/Dashboard/SmallTaskCard";
 import { STYLEDButton } from "../../styles/genericButton";
+import { AuthContext } from "../../Contexts/AuthContext";
 
 function Tasks() {
+  const { auth, setAuth } = useContext(AuthContext);
+  const { isAdmin, setIsAdmin } = useContext(AdminContext);
+  const isAdminQuery = useIsAdminQuery({ email: auth?.data?.email });
+
+  // console.log(isAdmin)
+
+  let allTasksQuery;
+
+  if (isAdmin) {
+    allTasksQuery = useGetAllTasksQuery();
+  } else {
+    allTasksQuery = useGetAllTasksByEmailQuery(auth?.data?.email);
+  }
+
   const {
     data: allTasks,
     error: allTasksError,
     isError: allTasksIsError,
     isLoading: allTasksIsLoading,
     isSuccess: allTasksIsSuccess,
-  } = useGetAllTasksQuery();
+  } = allTasksQuery;
+
+  // PAGINATION LOGIC
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(3);
   const [activeButtonIndex, setActiveButtonIndex] = useState(0);
-
   const handlePageChange = (selectedPage) => {
-    setCurrentPage(selectedPage+1);
+    setCurrentPage(selectedPage + 1);
     setActiveButtonIndex(selectedPage);
-  }
-
+  };
   const handleNextPageClick = () => {
     setCurrentPage((prevPage) => prevPage + 1);
     setActiveButtonIndex((prevPage) => prevPage + 1);
   };
-
   const handlePrevPageClick = () => {
     setCurrentPage((prevPage) => prevPage - 1);
     setActiveButtonIndex((prevPage) => prevPage - 1);
   };
-
   const handlePageSizeChange = (event) => {
     setPageSize(Number(event.target.value));
     setCurrentPage(1);
@@ -68,40 +85,69 @@ function Tasks() {
         </FixedSizeList>
 
         <STYLEDPageContainer>
-          {Array.from({ length: Math.ceil(allTasks?.data?.length / pageSize) }, (_, i) => (
-            <STYLEDButton 
-            style={{
-              backgroundColor: activeButtonIndex === i ? "var(--main-color)" : "var(--secondary-color)",
-              color: activeButtonIndex === i ? "var(--background-color)" : "var(--main-color)",
-            }}            
-            key={i} onClick={() => handlePageChange(i)}>{i + 1}</STYLEDButton>
-          ))}
+          {Array.from(
+            { length: Math.ceil(allTasks?.data?.length / pageSize) },
+            (_, i) => (
+              <STYLEDButton
+                style={{
+                  backgroundColor:
+                    activeButtonIndex === i
+                      ? "var(--main-color)"
+                      : "var(--secondary-color)",
+                  color:
+                    activeButtonIndex === i
+                      ? "var(--background-color)"
+                      : "var(--main-color)",
+                }}
+                key={i}
+                onClick={() => handlePageChange(i)}
+              >
+                {i + 1}
+              </STYLEDButton>
+            )
+          )}
         </STYLEDPageContainer>
 
         <div>
-          <STYLEDButton width="40%"
-           onClick={handlePrevPageClick} disabled={currentPage === 1}>
-           Page Précédente
+          <STYLEDButton
+            width="40%"
+            onClick={handlePrevPageClick}
+            disabled={currentPage === 1}
+          >
+            Page Précédente
           </STYLEDButton>
-          <span>&nbsp;Page {currentPage}sur{Math.ceil(allTasks?.data?.length / pageSize)}&nbsp;</span>
-          <STYLEDButton width="40%"
-           onClick={handleNextPageClick} disabled={currentPage === (Math.ceil(allTasks?.data?.length / pageSize))}>
+          <span>
+            &nbsp;{currentPage}sur
+            {Math.ceil(allTasks?.data?.length / pageSize)}&nbsp;
+          </span>
+          <STYLEDButton
+            width="40%"
+            onClick={handleNextPageClick}
+            disabled={
+              currentPage === Math.ceil(allTasks?.data?.length / pageSize)
+            }
+          >
             Page Suivante
-          </STYLEDButton>          
+          </STYLEDButton>
         </div>
 
         <div>
           <label htmlFor="pageSize">Affichage par page:</label>
-          <select id="pageSize" value={pageSize} onChange={handlePageSizeChange}>
+          <select
+            id="pageSize"
+            value={pageSize}
+            onChange={handlePageSizeChange}
+          >
             <option value="2">2</option>
             <option value="3">3</option>
             <option value="5">5</option>
             <option value="10">10</option>
             <option value="15">15</option>
-            <option value={allTasks?.data?.length}>All</option>
+            <option value={allTasks?.data?.length}>
+              All({allTasks?.data?.length})
+            </option>
           </select>
         </div>
-
       </>
     );
   }
@@ -124,7 +170,7 @@ function Tasks() {
         // IF ADMIN LOGIC
         <STYLEDContainer>
           <STYLEDContainerBox>
-            <div>All Tasks</div>
+            <div>Admin : Toutes les tâches.</div>
             {content}
           </STYLEDContainerBox>
         </STYLEDContainer>
@@ -132,7 +178,7 @@ function Tasks() {
         // IF NOT ADMIN LOGIC
         <STYLEDContainer>
           <STYLEDContainerBox>
-            <div>Your Tasks</div>
+            <div>Vos tâches.</div>
             {content}
           </STYLEDContainerBox>
         </STYLEDContainer>
@@ -144,8 +190,7 @@ function Tasks() {
 export default Tasks;
 
 const STYLEDPageContainer = styled.div`
-display:flex;
-justify-content:center;
-align-items: center;
-
-`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;

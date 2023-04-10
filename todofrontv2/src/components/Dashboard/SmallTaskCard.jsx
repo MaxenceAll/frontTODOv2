@@ -46,10 +46,10 @@ function SmallTaskCard({ task }) {
       is_completed: (newCheck ? 1 : 0),
       id_priority: newPriority,
     };
-    console.log("L'object a send:", newTaskObject);
+    // console.log("L'object a send:", newTaskObject);
     try {
       const { data } = await updateTask(newTaskObject);
-      console.log(data)
+      // console.log(data)
       setNewCheck(data.data.is_completed === 1);
       setNewTitle(data.data.title);
       setNewDeadline(data.data.deadline_date);
@@ -61,7 +61,7 @@ function SmallTaskCard({ task }) {
     }
   };
 
-  console.log("component re-rendered")
+  // console.log("component re-rendered")
 
   return (
     <>

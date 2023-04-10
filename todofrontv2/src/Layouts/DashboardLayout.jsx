@@ -10,7 +10,7 @@ export default function DashboardLayout() {
   const { auth, setAuth } = useContext(AuthContext);
   // console.log(auth)
   const isAdmin = useContext(AdminContext).isAdmin;
-  console.log(isAdmin)
+  // console.log(isAdmin)
 
   if (!auth?.data?.email) {
     return (

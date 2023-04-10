@@ -97,6 +97,7 @@ function Login() {
       toast.success(<ButtonReturnToHome />);
       setAuth(resp);
       setAuthCookie(resp.token ?? null, { "max-age": `${60 * 60 * 24}` });
+    
       // console.log(authCookie);
     }
   };
@@ -106,9 +107,9 @@ function Login() {
       toast.error(`Oooooops les mots de passe ne correspondent pas !`);
       return;
     }
-    console.log(data);
+    // console.log(data);
     const resp = await fetcher.post("signup", data);
-    console.log(resp);
+    // console.log(resp);
     if (resp.result) {
       // console.log("yo its ok");
       toast.success(
