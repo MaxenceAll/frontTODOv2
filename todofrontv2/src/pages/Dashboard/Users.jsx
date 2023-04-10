@@ -1,7 +1,6 @@
 import React, { useContext, useState } from "react";
 import {
   useGetCustomerQuery,
-  useIsAdminQuery,
 } from "../../features/todosSlice";
 import { AdminContext } from "../../Contexts/AdminContext";
 import { AuthContext } from "../../Contexts/AuthContext";
@@ -14,23 +13,10 @@ import styled from "styled-components";
 import { STYLEDButton } from "../../styles/genericButton";
 import { STYLEDhr } from "../../styles/genericHR";
 import { STYLEDContainer, STYLEDContainerBox } from "../../styles/genericContainer";
-import { useForm } from "react-hook-form";
 
 function Users() {
   const { isAdmin, setIsAdmin } = useContext(AdminContext);
   const { auth, setAuth } = useContext(AuthContext);
-  const isAdminQuery = useIsAdminQuery({ email: auth?.data?.email });
-  // console.log(isAdmin);
-  // console.log(isAdminQuery?.data?.data===1);
-
-
-
-  const {
-    register,
-    handleSubmit,
-    formState: { errors = "" },
-    reset,
-  } = useForm();
 
 
   let allUsersQuery;

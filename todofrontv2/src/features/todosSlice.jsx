@@ -25,6 +25,9 @@ export const todosApi = createApi({
     }),
 
 
+
+
+
     getAllTodos: builder.query({
       query: () => "todo",
       transformResponse: (response) => {
@@ -40,10 +43,7 @@ export const todosApi = createApi({
       providesTags: ["Todos"],
     }),
 
-
-
-
-    
+  
 
     getAllTasks: builder.query({
       query: (page=1) => "task",
@@ -224,7 +224,6 @@ export const todosApi = createApi({
     }),
     
 
-
     updateTask: builder.mutation({
       query: ({ id, title , description , id_priority , is_completed, deadline_date }) => ({
         url: `task/${id}`,
@@ -233,9 +232,17 @@ export const todosApi = createApi({
       }),
       invalidatesTags: ["Tasks"],
     }),
-
-
     
+    updateTodo: builder.mutation({
+      query: ({ id, title , description , id_customer, is_favorite }) => ({
+        url: `todo/${id}`,
+        method: "PUT",
+        body: { title , description , id_customer , is_favorite },
+      }),
+      invalidatesTags: ["Todos"],
+    }),
+
+
     updateCustomer: builder.mutation({
       query: ({ id, email , is_deleted , is_verified , is_admin }) => ({
         url: `customer/${id}`,
@@ -247,16 +254,11 @@ export const todosApi = createApi({
 
 
 
+
+
+
     actualUser: builder.query({
-      query: ({ email }) => ({
-        url: `customer/byemail/${email}`,
-        method: "GET",
-        params: { email },
-      }),
-      onSuccess: (response, { query }) => {
-        const { email } = query.params;
-        console.log(`Response for actualUser endpoint with email ${email}:`, response);
-      },      
+      query: ({ table, id }) => `${table}/${id}`,
     }),
 
 
@@ -289,4 +291,5 @@ export const {
   useUpdateTaskMutation,
   useUpdateCustomerMutation,
   useActualUserQuery,
+  useUpdateTodoMutation,
 } = todosApi;
