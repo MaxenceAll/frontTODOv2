@@ -247,6 +247,19 @@ export const todosApi = createApi({
 
 
 
+    actualUser: builder.query({
+      query: ({ email }) => ({
+        url: `customer/byemail/${email}`,
+        method: "GET",
+        params: { email },
+      }),
+      onSuccess: (response, { query }) => {
+        const { email } = query.params;
+        console.log(`Response for actualUser endpoint with email ${email}:`, response);
+      },      
+    }),
+
+
 
 
 
@@ -275,4 +288,5 @@ export const {
   useIsAdminQuery,
   useUpdateTaskMutation,
   useUpdateCustomerMutation,
+  useActualUserQuery,
 } = todosApi;

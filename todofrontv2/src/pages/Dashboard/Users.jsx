@@ -17,8 +17,8 @@ import { STYLEDContainer, STYLEDContainerBox } from "../../styles/genericContain
 import { useForm } from "react-hook-form";
 
 function Users() {
-  const { auth, setAuth } = useContext(AuthContext);
   const { isAdmin, setIsAdmin } = useContext(AdminContext);
+  const { auth, setAuth } = useContext(AuthContext);
   const isAdminQuery = useIsAdminQuery({ email: auth?.data?.email });
   // console.log(isAdmin);
   // console.log(isAdminQuery?.data?.data===1);

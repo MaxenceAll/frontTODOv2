@@ -19,8 +19,8 @@ import { STYLEDButton } from "../../styles/genericButton";
 import { AuthContext } from "../../Contexts/AuthContext";
 
 function Tasks() {
-  const { auth, setAuth } = useContext(AuthContext);
   const { isAdmin, setIsAdmin } = useContext(AdminContext);
+  const { auth, setAuth } = useContext(AuthContext);
   const isAdminQuery = useIsAdminQuery({ email: auth?.data?.email });
 
   // console.log(isAdmin)

@@ -7,9 +7,9 @@ import { AdminContext } from "../Contexts/AdminContext";
 import { AuthContext } from "../Contexts/AuthContext";
 
 export default function DashboardLayout() {
+  const isAdmin = useContext(AdminContext).isAdmin;
   const { auth, setAuth } = useContext(AuthContext);
   // console.log(auth)
-  const isAdmin = useContext(AdminContext).isAdmin;
   // console.log(isAdmin)
 
   if (!auth?.data?.email) {

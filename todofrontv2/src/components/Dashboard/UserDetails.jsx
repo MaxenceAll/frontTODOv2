@@ -14,7 +14,7 @@ function UserDetails(props) {
     useUpdateCustomerMutation();
 
   const onSubmit = async (data) => {
-    console.log(data);
+    // console.log(data);
     const newCustomerObject = {
       id: user.id,
       email: data.email,
@@ -22,7 +22,7 @@ function UserDetails(props) {
       is_verified: data.is_verified ? 1 : 0,
       is_admin: data.is_admin ? 1 : 0,
     };
-    console.log(updateCustomer);
+    // console.log(updateCustomer);
     try {
       const { data } = await updateCustomer(newCustomerObject);
       // console.log(data)
