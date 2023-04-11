@@ -2,9 +2,17 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import config from "../../config";
 import Image from "../Image/Image";
+import styled from 'styled-components'
 
-function ImageGallery({ userId }) {
+import { v4 as uuidv4 } from 'uuid';
+import { STYLEDButton } from "../../styles/genericButton";
+
+function SelectImage({ userId , onSelectImage }) {
   const [images, setImages] = useState([]);
+
+  const handleSelect = (filename) => {
+    onSelectImage(filename);
+  }
 
   useEffect(() => {
     const fetchImages = async () => {
@@ -24,11 +32,19 @@ function ImageGallery({ userId }) {
     <>
       <div>
         {images.map((filename) => (
-          <Image key={filename} userId={userId} filename={filename} />
+          <div key={uuidv4()}>
+            <Image userId={userId} filename={filename} />
+            <STYLEDButton onClick={() => handleSelect(filename)}>Choisir</STYLEDButton>
+          </div>
         ))}
       </div>
     </>
   );
 }
 
-export default ImageGallery;
+export default SelectImage;
+
+const STYLEDChooseImageContainer = styled.div`
+display: flex;
+
+`

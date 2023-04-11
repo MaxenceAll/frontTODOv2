@@ -10,6 +10,8 @@ import config from "../../config";
 import { AuthContext } from "../../Contexts/AuthContext";
 import { AdminContext } from "../../Contexts/AdminContext";
 import ImageGallery from "./ImageGallery";
+import { STYLEDButton } from "../../styles/genericButton";
+import { STYLEDInput } from "../../styles/genericInput";
 
 function UploadForm() {
   const { isAdmin, setIsAdmin } = useContext(AdminContext);
@@ -21,6 +23,9 @@ function UploadForm() {
     setSelectedFile(event.target.files[0]);
   }
 
+  // pour le re-render after submit
+  const [key, setKey] = useState(0);
+
   async function handleSubmit(event) {
     event.preventDefault();
 
@@ -28,12 +33,6 @@ function UploadForm() {
     console.log(auth?.data?.id);
     formData.append("userId", auth?.data?.id);
     formData.append("image", selectedFile);
-
-    console.log("Form Data:");
-
-    for (let [key, value] of formData) {
-      // console.log(key, value);
-    }
 
     const url = config.api.url + "customer/uploads";
     const headers = { authorization: config.api.authorization };
@@ -43,6 +42,7 @@ function UploadForm() {
       const response = await axios.post(url, formData, { headers });
       // console.log(response);
       // console.log(response.data);
+      setKey(key + 1);
     } catch (error) {
       console.error(error);
     }
@@ -54,8 +54,8 @@ function UploadForm() {
         <STYLEDContainerBox>
           {/* encType pour include les headers acceptation de fichier */}
           <form onSubmit={handleSubmit} encType="multipart/form-data">
-            <input type="file" onChange={handleFileInputChange} />
-            <button type="submit">Uploader</button>
+            <STYLEDInput type="file" onChange={handleFileInputChange} />
+            <STYLEDButton type="submit">Uploader</STYLEDButton>
           </form>
 
           {selectedFile && (
@@ -69,11 +69,13 @@ function UploadForm() {
         </STYLEDContainerBox>
       </STYLEDContainer>
 
-      <STYLEDContainer>
-        <STYLEDContainerBox>
-          <ImageGallery userId={auth?.data?.id} />
-        </STYLEDContainerBox>
-      </STYLEDContainer>
+
+        <STYLEDContainer>
+          <STYLEDContainerBox>
+            <ImageGallery userId={auth?.data?.id} key={key}/>
+          </STYLEDContainerBox>
+        </STYLEDContainer>
+
     </>
   );
 }

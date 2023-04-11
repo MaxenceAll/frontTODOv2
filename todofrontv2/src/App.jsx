@@ -33,7 +33,6 @@ import Users from "./pages/Dashboard/Users";
 import DashboardLayout from "./Layouts/DashboardLayout";
 import UploadForm from "./components/Dashboard/UploadForm";
 
-import ImageGallery from "./components/Dashboard/ImageGallery";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -52,7 +51,7 @@ const router = createBrowserRouter(
           <Route path="dashboard/tasks" element={<Tasks/>} /> 
           <Route path="dashboard/users" element={<Users/>} /> 
           <Route path="dashboard/upload" element={<UploadForm/>} /> 
-          {/* <Route path="dashboard/gallery" element={<ImageGallery/>} />  */}
+
 
         </Route>
 

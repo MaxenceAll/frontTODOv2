@@ -16,6 +16,7 @@ import {
   useSoftDeleteMutation,
   useUpdateFavoriteMutation,
   useUpdateTodoDescMutation,
+  useUpdateTodoMutation,
   useUpdateTodoTitleMutation,
 } from "../../features/todosSlice";
 import { STYLEDButton } from "../../styles/genericButton";
@@ -33,6 +34,8 @@ import useWindowSize from "react-use/lib/useWindowSize";
 
 import { AnimatedCheckmark, MODES } from "../Checkmark/AnimatedCheckmark";
 import PulsingHeart from "../PulsingHeart/PulsingHeart";
+import Image from "../Image/Image";
+import SelectImage from "../Image/SelectImage";
 
 function TodoCard({ todo }) {
   const [favorite, setFavorite] = useState(todo.is_favorite);
@@ -164,6 +167,36 @@ function TodoCard({ todo }) {
   // Confetti logic :
   const { width, height } = useWindowSize();
 
+  // select image logic :
+  const [
+    updateTodo,
+    {
+      error: updateTodoError,
+      isLoading: updateTodoIsLoading,
+      isSuccess: updateTodoIsSuccess,
+      isError: updateTodoIsError,
+    },
+  ] = useUpdateTodoMutation();
+  const [isModalNewImage, setIsModalNewImage] = useState(false);
+  const handleChooseImage = (e) => {
+    setIsModalNewImage(true);
+  };
+  const handleSelectImage = async (filename) => {
+    console.log("filename caught:", filename);
+    try {
+      await updateTodo({ id: todo.id, url_img: filename });
+      if (updateTodoIsSuccess) {
+        console.log("yo its a success");
+      }
+      if (updateTodoIsError) {
+        console.log("oops error:", updateTodoError);
+      }
+    } catch (error) {
+      console.log("oops error:", error);
+    }
+    setIsModalNewImage(false);
+  };
+
   return (
     <>
       <GenericModal
@@ -291,6 +324,31 @@ function TodoCard({ todo }) {
       </STYLEDTitle>
 
       <STYLEDTodoContainer onDoubleClick={handleDoubleClickNewDesc}>
+        <GenericModal
+          ariaLabelMessage="Modal d'ajout d'image."
+          isOpen={isModalNewImage}
+          onClose={() => setIsModalNewImage(false)}
+        >
+          <SelectImage
+            userId={todo.id_customer}
+            onSelectImage={handleSelectImage}
+          />
+        </GenericModal>
+
+        {todo.url_img ? (
+          <Image userId={todo.id_customer} filename={todo.url_img} />
+        ) : (
+          <STYLEDNoImgTodo>
+            <STYLEDButton
+              width="100%"
+              height="100%"
+              onClick={handleChooseImage}
+            >
+              Ajouter une image
+            </STYLEDButton>
+          </STYLEDNoImgTodo>
+        )}
+
         {!editDesc ? (
           todo.description ? (
             todo.description
@@ -461,3 +519,16 @@ const STYLEDParagraphProgress = styled.span`
 `;
 
 const STYLEDTodoTitle = styled.div``;
+
+const STYLEDNoImgTodo = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  font-size: 0.7rem;
+  font-style: italic;
+  width: 100px;
+  height: 100px;
+  background-color: var(--background-color);
+  border-radius: 10px;
+`;

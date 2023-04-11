@@ -234,10 +234,10 @@ export const todosApi = createApi({
     }),
     
     updateTodo: builder.mutation({
-      query: ({ id, title , description , id_customer, is_favorite }) => ({
+      query: ({ id, title , description , id_customer, is_favorite , url_img}) => ({
         url: `todo/${id}`,
         method: "PUT",
-        body: { title , description , id_customer , is_favorite },
+        body: { title , description , id_customer , is_favorite, url_img },
       }),
       invalidatesTags: ["Todos"],
     }),

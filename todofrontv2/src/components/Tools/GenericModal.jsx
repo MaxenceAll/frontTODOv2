@@ -77,8 +77,9 @@ const ModalContent = styled.div`
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 80%;
-  max-height: 25%;
+  /* TODO ajouter width and height en props pour pour de .. */
+  /* width: 80%;
+  max-height: 25%; */
   display: flex;
   justify-content: center;
   align-items: center;

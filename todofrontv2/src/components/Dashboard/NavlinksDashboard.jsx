@@ -26,14 +26,6 @@ function NavlinksDashboard() {
           <STYLEDButton>Upload</STYLEDButton>
         </NavLink>
       </span>
-      <span>
-        <NavLink to="/dashboard/gallery">
-          <STYLEDButton>Mes images</STYLEDButton>
-        </NavLink>
-      </span>
-
-
-
 
     </STYLEDNavLinkDashboard>
   );
