@@ -52,6 +52,7 @@ function UploadForm() {
     <>
       <STYLEDContainer>
         <STYLEDContainerBox>
+          Ici vous pouvez ajouter des images afin de les liers à une todo !
           {/* encType pour include les headers acceptation de fichier */}
           <form onSubmit={handleSubmit} encType="multipart/form-data">
             <STYLEDInput type="file" onChange={handleFileInputChange} />
@@ -72,6 +73,7 @@ function UploadForm() {
 
         <STYLEDContainer>
           <STYLEDContainerBox>
+            Votre bibliothèque :
             <ImageGallery userId={auth?.data?.id} key={key}/>
           </STYLEDContainerBox>
         </STYLEDContainer>
@@ -84,4 +86,24 @@ export default UploadForm;
 
 const STYLEDImgPreview = styled.img`
   width: 300px;
+`;
+
+const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`;
+
+const ProgressBar = styled.div`
+  width: 100%;
+  height: 10px;
+  border-radius: 5px;
+  background-color: lightgray;
+  margin-bottom: 10px;
+`;
+
+const Progress = styled.div`
+  height: 100%;
+  border-radius: 5px;
+  background-color: green;
 `;

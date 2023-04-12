@@ -182,11 +182,11 @@ function TodoCard({ todo }) {
     setIsModalNewImage(true);
   };
   const handleSelectImage = async (filename) => {
-    console.log("filename caught:", filename);
+    // console.log("filename caught:", filename);
     try {
       await updateTodo({ id: todo.id, url_img: filename });
       if (updateTodoIsSuccess) {
-        console.log("yo its a success");
+        // console.log("yo its a success");
       }
       if (updateTodoIsError) {
         console.log("oops error:", updateTodoError);
